@@ -21,8 +21,8 @@ export default function CandidateLoginPage() {
             <section className="page-section">
                 <div className="grid grid-cols-2">
                     {/* Left Side */}
-                    <div className="bg-main text-white p-12 rounded-l-lg">
-                        <p className="text-sm font-semibold tracking-wider accent-color mb-4">FOR CANDIDATES</p>
+                    <div className="bg-near-black text-white p-12 rounded-l-lg">
+                        <p className="text-sm font-semibold tracking-wider text-amber-600 mb-4">FOR CANDIDATES</p>
                         <h1 className="text-4xl font-bold mb-6">
                             Find your next <span className="italic">opportunity</span>.
                         </h1>
@@ -65,7 +65,7 @@ export default function CandidateLoginPage() {
 
                         <div className="border-t border-gray-700 pt-8 mt-8">
                             <p className="text-xs text-gray-400 italic mb-4">Empowering talent to reach their potential.</p>
-                            <p className="text-sm accent-color">Career Platform</p>
+                            <p className="text-sm text-amber-600">Career Platform</p>
                         </div>
                     </div>
 
@@ -80,7 +80,7 @@ export default function CandidateLoginPage() {
                                 <input
                                     type="email"
                                     placeholder="you@example.com"
-                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-color"
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-600"
                                 />
                             </div>
 
@@ -89,7 +89,7 @@ export default function CandidateLoginPage() {
                                 <input
                                     type="password"
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-color"
+                                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-slate-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-600"
                                 />
                             </div>
 
@@ -97,21 +97,21 @@ export default function CandidateLoginPage() {
                                 <input
                                     type="checkbox"
                                     id="remember"
-                                    className="w-4 h-4 accent-color bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-accent-color"
+                                    className="w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-amber-600"
                                 />
                                 <label htmlFor="remember" className="text-sm text-gray-600">Remember me</label>
                             </div>
 
                             <a
                                 href="/dashboard"
-                                className="w-full bg-main hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-200 block"
+                                className="w-full bg-near-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors duration-200 block"
                             >
                                 Sign In
                             </a>
                         </div>
 
                         <div className="mt-8 pt-6 text-center">
-                            <p className="text-sm text-gray-600">Don't have an account? <a href="/signup" className="accent-color hover:text-yellow-600 font-medium">Sign up here</a></p>
+                            <p className="text-sm text-gray-600">Don't have an account? <a href="/signup" className="text-amber-600 hover:text-yellow-600 font-medium">Sign up here</a></p>
                         </div>
                     </div>
                 </div>

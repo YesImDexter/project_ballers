@@ -1,7 +1,6 @@
+import { Check, CircleCheckBig } from 'lucide-react';
 import Header from './components/Header';
 import './styles/input.css';
-
-export default function LandingPage() {
 
 function IconCandidate() {
   return (
@@ -22,94 +21,317 @@ function IconEmployer() {
   );
 }
 
+function IconLightning() {
   return (
-    <div className="min-h-screen bg-white">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+      <path fillRule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function IconBell() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+      <path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0 1 13.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 0 1-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 1 1-7.48 0 24.585 24.585 0 0 1-4.831-1.244.75.75 0 0 1-.298-1.205A8.217 8.217 0 0 0 5.25 9.75V9Zm4.502 8.9a2.25 2.25 0 1 0 4.496 0 25.057 25.057 0 0 1-4.496 0Z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 shrink-0 text-near-black">
+      <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function StatsSection() {
+  const stats = [
+    { value: "900+", label: "Hiring Partners" },
+    { value: "52", label: "Sectors" },
+    { value: "10K+", label: "Active Candidates" },
+    { value: "92%", label: "Match Satisfaction" },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
+      {stats.map((s) => (
+        <div key={s.label} className="text-center">
+          <div className="text-3xl md:text-4xl font-bold text-near-black font-headings">{s.value}</div>
+          <div className="text-sm text-muted mt-1">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function NumberedSection({ num, title, subtitle, children }: { num: string; title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <section className="py-20 md:py-32" id={num === "01" ? "candidates" : num === "02" ? "employers" : undefined}>
+      <div className="mx-auto max-w-6xl px-6">
+        <span className="text-8xl md:text-9xl font-headings font-bold text-near-black/5 block leading-none select-none">
+          {num}
+        </span>
+        <div className="-mt-10 md:-mt-14">
+          <h2 className="text-3xl md:text-5xl font-headings font-bold text-near-black mb-6">{title}</h2>
+          <p className="text-lg text-muted max-w-2xl mb-12">{subtitle}</p>
+          {children}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Card({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="bg-card rounded-xl p-6 border border-light-border/50">
+      <div className="w-10 h-10 bg-near-black rounded-lg flex items-center justify-center !text-white mb-4">
+        {icon}
+      </div>
+      <h3 className="text-lg font-bold text-near-black mb-2">{title}</h3>
+      <p className="text-sm text-muted leading-relaxed">{desc}</p>
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-cream">
       <Header />
-      <main className="mx-auto max-w-6xl px-6 py-16">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <p className="text-xs tracking-widest text-black uppercase mb-4 py-2 px-4 rounded-full bg-gray-300 inline-block">
-            CareerOS · Proof-of-Work Marketplace
-          </p>
-          <h1 className="text-2xl md:text-4xl font-bold text-black mb-4 leading-tight">
-            Hiring based on real evidence, not resumes.
-          </h1>
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            CareerOS matches candidates and hiring teams on portfolio artifacts and real business challenges. Both sides swipe right before the conversation begins.
-          </p>
-        </section>
 
-        <section className="page-section">
-        {/* Two Column Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Candidate Section */}
-          <div className="bg-gray-50 p-8 rounded-xl flex flex-col">
-            <div className="w-14 h-14 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">
-              <div className="text-white">
-                <IconCandidate />
-              </div>
-            </div>
-            <h2 className="text-xl font-bold text-black mb-3 text-center">
-              Candidate / Student
-            </h2>
-            <p className="text-sm text-gray-600 mb-4 text-center grow">
-              Upload your projects, get AI-evaluated skill tags, and surface in matches for real challenges in your target roles.
-            </p>
-            <ul className="space-y-2 mb-6 grow">
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">Build a verified Capability Profile</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">See match reasons before you swipe</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">Continue only on mutual interest</span>
-              </li>
-            </ul>
-            <button className="w-full bg-black text-white py-2 px-6 cursor-pointer rounded-full text-sm font-semibold hover:bg-gray-800 transition">
-              Continue as Candidate
-            </button>
-          </div>
+      {/* Hero */}
+      <section className="min-h-[80vh] flex flex-col justify-center items-center text-center px-6">
+        <span className="bg-near-black !text-white text-xs tracking-wider uppercase rounded-full px-4 py-1.5 mb-6">
+          Proof-of-Work Marketplace
+        </span>
+        <h1 className="text-4xl md:text-6xl font-headings font-bold text-near-black leading-tight max-w-4xl mb-6">
+          Hiring based on real evidence, <span className="italic">not resumes.</span>
+        </h1>
+        <p className="text-base md:text-lg text-muted max-w-2xl mb-10">
+          Career OS matches candidates and hiring teams on portfolio artifacts and real business challenges.
+          Both sides swipe right before the conversation begins.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
+          <a href="/candidates" className="bg-near-black !text-white rounded-full px-8 py-3 text-sm font-semibold hover:opacity-90 transition">
+            I&apos;m a Candidate
+          </a>
+          <a href="#employers" className="border border-near-black text-near-black rounded-full px-8 py-3 text-sm font-semibold hover:bg-near-black hover:!text-white transition">
+            I&apos;m an Employer
+          </a>
+        </div>
+        <StatsSection />
+      </section>
 
-          {/* Employer Section */}
-          <div className="bg-gray-50 p-8 rounded-xl flex flex-col">
-            <div className="w-14 h-14 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">
-              <div className="text-white">
-                <IconEmployer />
-              </div>
+      {/* Trust Bar */}
+      <section className="bg-card py-20 border-y border-light-border/50">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="text-center text-sm text-muted uppercase tracking-wider mb-10">Trusted by leading institutions</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-cream rounded-xl p-8 text-center">
+              <h3 className="text-lg font-bold text-near-black font-headings mb-2">Universities</h3>
+              <p className="text-sm text-muted">15+ partner institutions across Asia</p>
             </div>
-            <h2 className="text-xl font-bold text-black mb-3 text-center">
-              Employer / Hiring Team
-            </h2>
-            <p className="text-sm text-gray-600 mb-4 text-center grow">
-              Describe the real challenge you need solved. We match you with candidates whose proof-of-work fits — and explain every match.
-            </p>
-            <ul className="space-y-2 mb-6 grow">
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">Demand Tickets, not job descriptions</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">Evidence-backed candidate matches</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-black font-bold mt-0.5">→</span>
-                <span className="text-sm text-gray-700">Mutual swipe before chat, interview, or trial</span>
-              </li>
-            </ul>
-            <button className="w-full bg-black text-white py-2 px-6 cursor-pointer rounded-full text-sm font-semibold hover:bg-gray-800 transition">
-              Continue as Employer
-            </button>
+            <div className="bg-cream rounded-xl p-8 text-center">
+              <h3 className="text-lg font-bold text-near-black font-headings mb-2">Employers</h3>
+              <p className="text-sm text-muted">900+ hiring partners across 52 sectors</p>
+            </div>
+            <div className="bg-cream rounded-xl p-8 text-center">
+              <h3 className="text-lg font-bold text-near-black font-headings mb-2">Programmes</h3>
+              <p className="text-sm text-muted">Government & corporate upskilling initiatives</p>
+            </div>
           </div>
         </div>
-        </section>
+      </section>
 
+      {/* /01 — For Candidates */}
+      <NumberedSection
+        num="01"
+        title="For Candidates — Your work speaks first."
+        subtitle="Upload your projects, get AI-evaluated skill tags, and surface in matches for real challenges in your target roles."
+      >
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <Card
+            icon={<IconCandidate />}
+            title="Build Your Capability Profile"
+            desc="Upload portfolio artifacts — code, designs, reports. AI evaluates and tags your skills automatically."
+          />
+          <Card
+            icon={<IconLightning />}
+            title="Get Matched on Evidence"
+            desc="No more keyword-stuffed resumes. Get matched to opportunities where your actual work fits."
+          />
+          <Card
+            icon={<Check strokeWidth={3} />}
+            title="Mutual Interest First"
+            desc="See match reasons before you swipe. Conversation starts only when both sides are interested."
+          />
+        </div>
+        <a href="/candidates" className="inline-flex bg-near-black !text-white rounded-full px-8 py-3 text-sm font-semibold hover:opacity-90 transition">
+          Continue as Candidate
+        </a>
+      </NumberedSection>
 
-      </main>
+      {/* /02 — For Employers */}
+      <NumberedSection
+        num="02"
+        title="For Employers — Hire from proof, not promises."
+        subtitle="Describe the real challenge you need solved. We match you with candidates whose proof-of-work fits."
+      >
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <Card
+            icon={<IconEmployer />}
+            title="Demand Tickets"
+            desc="Post real challenges instead of generic job descriptions. See exactly who can deliver."
+          />
+          <Card
+            icon={<IconLightning />}
+            title="Evidence-Backed Matches"
+            desc="Every candidate match comes with a clear explanation — this is why their work fits your need."
+          />
+          <Card
+            icon={<Check strokeWidth={3} />}
+            title="Swipe When Ready"
+            desc="Review matched candidates on your timeline. Mutual swipe before chat, interview, or trial."
+          />
+        </div>
+        <a href="#employers" className="inline-flex bg-near-black !text-white rounded-full px-8 py-3 text-sm font-semibold hover:opacity-90 transition">
+          Continue as Employer
+        </a>
+      </NumberedSection>
+
+      {/* /03 — Smart Matching */}
+      <NumberedSection
+        num="03"
+        title="Meet your smartest recruiter."
+        subtitle="AI-powered matching that understands skills, context, and potential — not keywords."
+      >
+        <div className="grid md:grid-cols-2 gap-6 mb-10">
+          <div className="bg-card rounded-xl p-8 border border-light-border/50">
+            <div className="flex items-start gap-4">
+              <CheckIcon />
+              <div>
+                <h3 className="text-lg font-bold text-near-black mb-1">Skill Extraction</h3>
+                <p className="text-sm text-muted">AI reads your portfolio and extracts demonstrable skills — no self-reporting required.</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-card rounded-xl p-8 border border-light-border/50">
+            <div className="flex items-start gap-4">
+              <CheckIcon />
+              <div>
+                <h3 className="text-lg font-bold text-near-black mb-1">Context-Aware Ranking</h3>
+                <p className="text-sm text-muted">Matches are ranked by how well your work aligns with the actual challenge, not just title keywords.</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-card rounded-xl p-8 border border-light-border/50">
+            <div className="flex items-start gap-4">
+              <CheckIcon />
+              <div>
+                <h3 className="text-lg font-bold text-near-black mb-1">Explainable Matches</h3>
+                <p className="text-sm text-muted">Every match shows why — specific artifacts, skills, and experiences that triggered the connection.</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-card rounded-xl p-8 border border-light-border/50">
+            <div className="flex items-start gap-4">
+              <CheckIcon />
+              <div>
+                <h3 className="text-lg font-bold text-near-black mb-1">Continuous Learning</h3>
+                <p className="text-sm text-muted">Matching improves with every swipe, every application, and every hire.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </NumberedSection>
+
+      {/* /04 — Real-time Updates */}
+      <NumberedSection
+        num="04"
+        title="Real-time updates, real confidence."
+        subtitle="Live notifications for new matches, application status changes, and hiring pipeline activity."
+      >
+        <div className="grid md:grid-cols-3 gap-6 mb-10">
+          <Card
+            icon={<IconBell />}
+            title="Instant Notifications"
+            desc="Get alerted the moment a match is found or an application status changes. Never miss an opportunity."
+          />
+          <Card
+            icon={<IconLightning />}
+            title="Live Pipeline View"
+            desc="Track every stage of your hiring journey — from match to chat to interview to offer — in real time."
+          />
+          <Card
+            icon={<Check strokeWidth={3} />}
+            title="Responsive Everywhere"
+            desc="Full-featured on desktop and mobile. Manage your career or hiring pipeline from any device."
+          />
+        </div>
+      </NumberedSection>
+
+      {/* Closing CTA */}
+      <section className="px-6 pb-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="bg-near-black !text-white rounded-2xl p-12 md:p-20 text-center">
+            <h2 className="text-3xl md:text-5xl font-headings font-bold leading-tight mb-4">
+              Ready to hire — or be hired — <span className="italic">on real evidence?</span>
+            </h2>
+            <p className="!text-white/70 max-w-xl mx-auto mb-10">
+              Join Career OS and start matching based on what you can actually do.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a href="/candidates" className="bg-white text-near-black rounded-full px-8 py-3 text-sm font-semibold hover:opacity-90 transition">
+                Get Started Free
+              </a>
+              <a href="#employers" className="border border-white !text-white rounded-full px-8 py-3 text-sm font-semibold hover:bg-white hover:text-near-black transition">
+                Learn More
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-cream border-t border-light-border/50 py-12">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid md:grid-cols-4 gap-8 mb-10">
+            <div className="col-span-1">
+              <div className="text-xl font-bold text-near-black mb-3">
+                Career<span className="text-amber-600">OS</span>
+              </div>
+              <p className="text-sm text-muted">A Talentbank product · built for Asia, in Malaysia.</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-near-black mb-4 uppercase tracking-wider">For Talent</h4>
+              <ul className="space-y-2 text-sm text-muted">
+                <li><a href="/candidates" className="hover:text-near-black transition">Browse Matches</a></li>
+                <li><a href="/candidates" className="hover:text-near-black transition">Capability Profile</a></li>
+                <li><a href="#candidates" className="hover:text-near-black transition">How It Works</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-near-black mb-4 uppercase tracking-wider">For Employers</h4>
+              <ul className="space-y-2 text-sm text-muted">
+                <li><a href="#employers" className="hover:text-near-black transition">Post a Ticket</a></li>
+                <li><a href="#employers" className="hover:text-near-black transition">Find Candidates</a></li>
+                <li><a href="#employers" className="hover:text-near-black transition">Pricing</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-near-black mb-4 uppercase tracking-wider">Company</h4>
+              <ul className="space-y-2 text-sm text-muted">
+                <li><a href="#" className="hover:text-near-black transition">About</a></li>
+                <li><a href="#" className="hover:text-near-black transition">Blog</a></li>
+                <li><a href="#" className="hover:text-near-black transition">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-light-border/50 pt-8 text-center text-sm text-muted">
+            Reference Build · Vol.01 · © 2026 Career OS. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
