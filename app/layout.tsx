@@ -46,8 +46,8 @@ const kamerik105 = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Career OS — Proof-of-Work Marketplace",
-  description: "Hiring based on real evidence, not resumes.",
+  title: "CareerOS",
+  description: "CareerOS is a proof-of-work marketplace that matches candidates and hiring teams based on portfolio artifacts and real business challenges.",
 };
 
 export default function RootLayout({

@@ -1,5 +1,5 @@
-import AppShell from './component/AppShell';
-import { candidateApplications, type ApplicationStage } from './data/candidate_data';
+import AppShell from '@/app/candidates/component/AppShell';
+import { candidateApplications, type ApplicationStage } from '@/app/candidates/data/candidate_data';
 
 const stageLabels: Record<ApplicationStage, string> = {
   applied: 'APPLIED',
@@ -18,15 +18,16 @@ function StageTimeline({ currentStage }: { currentStage: ApplicationStage }) {
       <div className="flex items-center gap-2">
         {stageOrder.map((stage, index) => (
           <div key={stage} className="flex items-center flex-1">
-            {/* Circle */}
-            <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                index <= currentIndex
-                  ? 'bg-green-600'
-                  : 'bg-gray-300'
-              }`}
-            >
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+            <div className="flex justify-center flex-1">
+              <div
+                className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                  index <= currentIndex
+                    ? 'bg-green-600'
+                    : 'bg-gray-300'
+                }`}
+              >
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+              </div>
             </div>
 
             {/* Line */}
@@ -136,39 +137,18 @@ export default function Page() {
                 </button>
               </div>
             </div>
-
-            {/* Application Summary Cards */}
-            <div className="space-y-3">
-              {candidateApplications.map((app) => (
-                <div key={app.id} className="bg-white rounded-lg border border-gray-200 p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                  <div className="flex items-start gap-2 mb-2">
-                    <div className="w-8 h-8 bg-blue-900 rounded flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                      {app.logo}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-gray-900 truncate">{app.company}</p>
-                      <p className="text-xs text-gray-600 truncate">{app.jobTitle}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-600">{app.fit}% fit</span>
-                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                      app.stage === 'offer' ? 'bg-green-100 text-green-700' :
-                      app.stage === 'interview' ? 'bg-blue-100 text-blue-700' :
-                      app.stage === 'screening' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {stageLabels[app.stage]}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-600">{app.currency} {app.salaryMin.toLocaleString()}-{app.salaryMax.toLocaleString()}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Right Content (Big) */}
           <div className="col-span-3 bg-white rounded-lg border border-gray-200 p-8 shadow-sm">
+            <main className="content-container">
+              <h1 className="text-2xl font-bold text-gray-900 mb-6">Your Applications</h1>
+              <div className="space-y-4">
+                {candidateApplications.map((application) => (
+                  <ApplicationCard key={application.id} application={application} />
+                ))}
+              </div>
+            </main>
           </div>
         </div>
       </div>
