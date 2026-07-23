@@ -1,16 +1,48 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./styles/input.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const paulGrotesk = localFont({
+  src: [
+    {
+      path: "./fonts/paul-grotesk/PaulGrotesk-Regular-Trail.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/paul-grotesk/PaulGrotesk-Thin-Trail.otf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "./fonts/paul-grotesk/PaulGrotesk-Bold-Trail.otf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-paul-grotesk",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const kamerik105 = localFont({
+  src: [
+    {
+      path: "./fonts/kamerik-105/Kamerik105-Book.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/kamerik-105/Kamerik105-Light.ttf",
+      weight: "100",
+      style: "normal",
+    },
+    {
+      path: "./fonts/kamerik-105/Kamerik105-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-kamerik105",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${paulGrotesk.variable} ${kamerik105.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
