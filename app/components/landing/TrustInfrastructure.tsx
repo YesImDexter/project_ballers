@@ -1,4 +1,4 @@
-import { marqueeRows } from "./content";
+﻿import { marqueeRows } from "./content";
 import MarqueeRow from "./MarqueeRow";
 import QuoteBlock from "./QuoteBlock";
 import Reveal from "./Reveal";
@@ -18,7 +18,7 @@ export default function TrustInfrastructure() {
             }
             lede={
               <>
-                Talentbank has spent <strong className="font-semibold text-near-black">15 years</strong>{" "}
+                Talentbank has spent <strong className="font-semibold text-accent">15 years</strong>{" "}
                 building career-market infrastructure across Asia — relationships, trust, and institutional
                 weight. Career OS is what gets built on top.
               </>

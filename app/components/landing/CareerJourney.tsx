@@ -1,4 +1,4 @@
-import { journey } from "./content";
+﻿import { journey } from "./content";
 import Reveal from "./Reveal";
 import SectionHeader from "./SectionHeader";
 
@@ -18,7 +18,7 @@ export default function CareerJourney() {
             lede={
               <>
                 Most career platforms are designed for one moment —{" "}
-                <strong className="font-semibold text-near-black">the job hunt.</strong> Career OS is
+                <strong className="font-semibold text-accent">the job hunt.</strong> Career OS is
                 designed for every chapter of evidence-based hiring.
               </>
             }
@@ -29,12 +29,12 @@ export default function CareerJourney() {
           {journey.map((step, i) => (
             <article
               key={step.title}
-              className="reveal-item rounded-xl border border-light-border bg-card p-6"
+              className="reveal-item rounded-xl border border-light-border bg-secondary p-6"
             >
-              <div className="mb-3 font-headings text-sm font-bold tabular-nums text-accent">
+              <div className="mb-3 font-headings text-sm font-bold tabular-nums text-brand">
                 {String(i + 1).padStart(2, "0")}
               </div>
-              <h3 className="mb-2 font-headings text-xl font-bold text-near-black">{step.title}</h3>
+              <h3 className="mb-2 font-headings text-xl font-bold text-accent">{step.title}</h3>
               <p className="text-sm leading-relaxed text-muted">{step.desc}</p>
             </article>
           ))}
