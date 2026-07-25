@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 
 type Props = {
   eyebrow?: string;
@@ -18,8 +18,8 @@ export default function SectionHeader({
   return (
     <div className={className}>
       {(eyebrow || num) && (
-        <div className="mb-4 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.16em] text-accent">
-          <span className="inline-block h-px w-6 bg-accent" aria-hidden="true" />
+        <div className="mb-4 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.16em] text-brand">
+          <span className="inline-block h-px w-6 bg-brand" aria-hidden="true" />
           {eyebrow && <span>{eyebrow}</span>}
           {num && (
             <span className="font-headings text-[13px] font-normal normal-case italic tracking-normal text-muted">
@@ -28,7 +28,7 @@ export default function SectionHeader({
           )}
         </div>
       )}
-      <h2 className="mb-6 max-w-3xl font-headings text-3xl font-bold leading-tight text-near-black md:text-5xl">
+      <h2 className="mb-6 max-w-3xl font-headings text-3xl font-bold leading-tight text-accent md:text-5xl">
         {title}
       </h2>
       {lede && (

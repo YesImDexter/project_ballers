@@ -1,31 +1,31 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-light-border bg-white/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-6 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-near-black">
-            Career<span className="text-accent">OS</span>
+          <Link href="/" className="text-2xl font-bold text-accent">
+            Career<span className="text-brand">OS</span>
           </Link>
 
           <div className="flex items-center gap-8">
             <nav className="hidden items-center gap-6 sm:flex" aria-label="Primary">
               <Link
                 href="/#candidates"
-                className="text-sm font-medium text-muted transition hover:text-near-black"
+                className="text-sm font-medium text-muted transition hover:text-accent"
               >
                 For talent
               </Link>
               <Link
                 href="/#employers"
-                className="text-sm font-medium text-muted transition hover:text-near-black"
+                className="text-sm font-medium text-muted transition hover:text-accent"
               >
                 For employers
               </Link>
               <Link
                 href="/#matching"
-                className="text-sm font-medium text-muted transition hover:text-near-black"
+                className="text-sm font-medium text-muted transition hover:text-accent"
               >
                 Matching
               </Link>
@@ -33,14 +33,14 @@ export default function Header() {
 
             <div className="flex items-center gap-3">
               <Link
-                href="/candidates"
-                className="px-4 py-2 text-sm font-medium text-muted transition hover:text-near-black"
+                href="/auth?mode=login"
+                className="px-4 py-2 text-sm font-medium text-muted transition hover:text-accent"
               >
                 Log in
               </Link>
               <Link
-                href="/candidates"
-                className="inline-flex items-center justify-center rounded-full bg-near-black px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                href="/auth?mode=register"
+                className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90"
               >
                 Get started
               </Link>

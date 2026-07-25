@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import "./styles/input.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const paulGrotesk = localFont({
   src: [
@@ -58,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${paulGrotesk.variable} ${kamerik105.variable} h-full antialiased`}
+      className={cn("h-full", "antialiased", paulGrotesk.variable, kamerik105.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

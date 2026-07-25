@@ -1,16 +1,16 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { footerLinks } from "./content";
 
 function FooterLink({ href, label }: { href: string; label: string }) {
   if (href.startsWith("#")) {
     return (
-      <a href={href} className="transition hover:text-near-black">
+      <a href={href} className="transition hover:text-accent">
         {label}
       </a>
     );
   }
   return (
-    <Link href={href} className="transition hover:text-near-black">
+    <Link href={href} className="transition hover:text-accent">
       {label}
     </Link>
   );
@@ -18,12 +18,12 @@ function FooterLink({ href, label }: { href: string; label: string }) {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-light-border/50 bg-cream py-12">
+    <footer className="border-t border-light-border/50 bg-primary py-12">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-10 grid gap-8 md:grid-cols-4">
           <div>
-            <div className="mb-3 text-xl font-bold text-near-black">
-              Career<span className="text-accent">OS</span>
+            <div className="mb-3 text-xl font-bold text-accent">
+              Career<span className="text-brand">OS</span>
             </div>
             <p className="text-sm text-muted">
               A Talentbank product · built for Asia, in Malaysia.
@@ -31,7 +31,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-near-black">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-accent">
               For Talent
             </h4>
             <ul className="space-y-2 text-sm text-muted">
@@ -44,7 +44,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-near-black">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-accent">
               For Employers
             </h4>
             <ul className="space-y-2 text-sm text-muted">
@@ -57,7 +57,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-near-black">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-accent">
               Company
             </h4>
             <ul className="space-y-2 text-sm text-muted">

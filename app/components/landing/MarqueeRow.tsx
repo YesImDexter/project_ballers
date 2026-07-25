@@ -1,4 +1,4 @@
-type Props = {
+﻿type Props = {
   name: string;
   sub: string;
   items: readonly string[];
@@ -19,7 +19,7 @@ export default function MarqueeRow({ name, sub, items, reverse, slow }: Props) {
   return (
     <div className="grid gap-4 md:grid-cols-[200px_1fr] md:items-center">
       <div>
-        <div className="font-headings text-base font-bold text-near-black">{name}</div>
+        <div className="font-headings text-base font-bold text-accent">{name}</div>
         <div className="mt-1 text-xs leading-snug text-muted">{sub}</div>
       </div>
       <div className="overflow-hidden">
@@ -27,7 +27,7 @@ export default function MarqueeRow({ name, sub, items, reverse, slow }: Props) {
           {doubled.map((item, i) => (
             <span
               key={`${item}-${i}`}
-              className="shrink-0 rounded-full border border-light-border bg-card px-4 py-2 text-sm text-near-black"
+              className="shrink-0 rounded-full border border-light-border bg-secondary px-4 py-2 text-sm text-accent"
             >
               {item}
             </span>

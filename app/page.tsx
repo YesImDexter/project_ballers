@@ -1,4 +1,4 @@
-import Header from "./components/Header";
+﻿import Header from "./components/Header";
 import AudienceModules from "./components/landing/AudienceModules";
 import CareerJourney from "./components/landing/CareerJourney";
 import ClosingCTA from "./components/landing/ClosingCTA";
@@ -13,7 +13,7 @@ import VisionPillars from "./components/landing/VisionPillars";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-primary">
       <ScrollProgress />
       <Header />
       <main>

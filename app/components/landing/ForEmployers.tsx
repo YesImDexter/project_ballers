@@ -1,4 +1,4 @@
-import { employerCards } from "./content";
+﻿import { employerCards } from "./content";
 import FeatureCard from "./FeatureCard";
 import { iconByName } from "./icons";
 import Reveal from "./Reveal";
@@ -8,11 +8,11 @@ export default function ForEmployers() {
     <section id="employers" className="scroll-mt-24 border-t border-light-border/50 py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         <Reveal>
-          <span className="block select-none font-headings text-8xl font-bold leading-none text-near-black/5 md:text-9xl">
+          <span className="block select-none font-headings text-8xl font-bold leading-none text-accent/5 md:text-9xl">
             02
           </span>
           <div className="-mt-10 md:-mt-14">
-            <h2 className="mb-6 font-headings text-3xl font-bold text-near-black md:text-5xl">
+            <h2 className="mb-6 font-headings text-3xl font-bold text-accent md:text-5xl">
               For Employers — Hire from proof, not promises.
             </h2>
             <p className="mb-12 max-w-2xl text-lg text-muted">
@@ -37,7 +37,7 @@ export default function ForEmployers() {
         <Reveal>
           <a
             href="#matching"
-            className="inline-flex rounded-full bg-near-black px-8 py-3 text-sm font-semibold !text-white transition hover:opacity-90"
+            className="inline-flex rounded-full bg-accent px-8 py-3 text-sm font-semibold !text-white transition hover:opacity-90"
           >
             See how matching works
           </a>
