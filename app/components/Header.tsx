@@ -39,7 +39,7 @@ export default function Header() {
                 Log in
               </Link>
               <Link
-                href="/candidates"
+                href="#"
                 className="inline-flex items-center justify-center rounded-full bg-near-black px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90"
               >
                 Get started
