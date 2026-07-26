@@ -3,10 +3,11 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Input } from "@/app/components/ui/input"
 import { Button } from "@/app/components/ui/button"
 import { Label } from "@/app/components/ui/label"
+import { Textarea } from "@/app/components/ui/textarea"
 import { Plus, X } from "lucide-react"
 
 const newDemandSchema = z.object({
@@ -15,6 +16,11 @@ const newDemandSchema = z.object({
 })
 
 export type NewDemandValues = z.infer<typeof newDemandSchema>
+
+interface ListRow {
+  id: number
+  value: string
+}
 
 export function NewDemandForm({ onClose }: { onClose: () => void }) {
   const {
@@ -26,31 +32,29 @@ export function NewDemandForm({ onClose }: { onClose: () => void }) {
     defaultValues: { title: "", description: "" },
   })
 
-  const [deliverables, setDeliverables] = useState([""])
-  const [metrics, setMetrics] = useState([""])
+  const nextId = useRef(2)
+  const [deliverables, setDeliverables] = useState<ListRow[]>([{ id: 0, value: "" }])
+  const [metrics, setMetrics] = useState<ListRow[]>([{ id: 1, value: "" }])
 
-  const addDeliverable = () => setDeliverables((prev) => [...prev, ""])
-  const removeDeliverable = (i: number) => setDeliverables((prev) => prev.filter((_, j) => j !== i))
-  const updateDeliverable = (i: number, val: string) =>
-    setDeliverables((prev) => prev.map((d, j) => (j === i ? val : d)))
-
-  const addMetric = () => setMetrics((prev) => [...prev, ""])
-  const removeMetric = (i: number) => setMetrics((prev) => prev.filter((_, j) => j !== i))
-  const updateMetric = (i: number, val: string) =>
-    setMetrics((prev) => prev.map((m, j) => (j === i ? val : m)))
+  const addRow = (setRows: typeof setDeliverables) =>
+    setRows((prev) => [...prev, { id: nextId.current++, value: "" }])
+  const removeRow = (setRows: typeof setDeliverables, id: number) =>
+    setRows((prev) => prev.filter((row) => row.id !== id))
+  const updateRow = (setRows: typeof setDeliverables, id: number, value: string) =>
+    setRows((prev) => prev.map((row) => (row.id === id ? { ...row, value } : row)))
 
   const onSubmit = async (data: NewDemandValues) => {
     console.log("New demand ticket:", {
       ...data,
-      deliverables: deliverables.filter(Boolean),
-      successMetrics: metrics.filter(Boolean),
+      deliverables: deliverables.map((d) => d.value).filter(Boolean),
+      successMetrics: metrics.map((m) => m.value).filter(Boolean),
     })
     await new Promise((r) => setTimeout(r, 500))
     onClose()
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
       <div className="space-y-1.5">
         <Label>Title</Label>
         <Input
@@ -62,10 +66,10 @@ export function NewDemandForm({ onClose }: { onClose: () => void }) {
 
       <div className="space-y-1.5">
         <Label>Description</Label>
-        <textarea
+        <Textarea
           {...register("description")}
           placeholder="Describe the real challenge — not a generic job description..."
-          className="w-full rounded-xl border border-soft-border bg-card px-3 py-2 text-sm outline-none resize-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="resize-none"
           rows={4}
         />
         {errors.description && (
@@ -76,20 +80,29 @@ export function NewDemandForm({ onClose }: { onClose: () => void }) {
       {/* Deliverables */}
       <div className="space-y-2">
         <Label>Deliverables</Label>
-        {deliverables.map((d, i) => (
-          <div key={i} className="flex gap-2">
-            <span className="text-muted pt-2.5 text-sm">→</span>
+        {deliverables.map((row) => (
+          <div key={row.id} className="flex gap-2">
+            <span className="pt-2.5 text-sm text-muted">→</span>
             <div className="flex-1">
-              <Input value={d} onChange={(e) => updateDeliverable(i, e.target.value)} placeholder="e.g., Self-serve dashboard MVP" />
+              <Input
+                value={row.value}
+                onChange={(e) => updateRow(setDeliverables, row.id, e.target.value)}
+                placeholder="e.g., Self-serve dashboard MVP"
+              />
             </div>
             {deliverables.length > 1 && (
-              <button type="button" onClick={() => removeDeliverable(i)} className="text-muted hover:text-destructive pt-2">
+              <button
+                type="button"
+                onClick={() => removeRow(setDeliverables, row.id)}
+                aria-label="Remove deliverable"
+                className="pt-2 text-muted hover:text-destructive"
+              >
                 <X size={16} />
               </button>
             )}
           </div>
         ))}
-        <button type="button" onClick={addDeliverable} className="flex items-center gap-1 text-xs text-brand font-medium hover:underline">
+        <button type="button" onClick={() => addRow(setDeliverables)} className="flex items-center gap-1 text-xs font-medium text-brand hover:underline">
           <Plus size={14} /> Add deliverable
         </button>
       </div>
@@ -97,20 +110,29 @@ export function NewDemandForm({ onClose }: { onClose: () => void }) {
       {/* Success metrics */}
       <div className="space-y-2">
         <Label>Success metrics</Label>
-        {metrics.map((m, i) => (
-          <div key={i} className="flex gap-2">
-            <span className="text-muted pt-2.5 text-sm">→</span>
+        {metrics.map((row) => (
+          <div key={row.id} className="flex gap-2">
+            <span className="pt-2.5 text-sm text-muted">→</span>
             <div className="flex-1">
-              <Input value={m} onChange={(e) => updateMetric(i, e.target.value)} placeholder="e.g., Ad-hoc requests reduced by 60%" />
+              <Input
+                value={row.value}
+                onChange={(e) => updateRow(setMetrics, row.id, e.target.value)}
+                placeholder="e.g., Ad-hoc requests reduced by 60%"
+              />
             </div>
             {metrics.length > 1 && (
-              <button type="button" onClick={() => removeMetric(i)} className="text-muted hover:text-destructive pt-2">
+              <button
+                type="button"
+                onClick={() => removeRow(setMetrics, row.id)}
+                aria-label="Remove metric"
+                className="pt-2 text-muted hover:text-destructive"
+              >
                 <X size={16} />
               </button>
             )}
           </div>
         ))}
-        <button type="button" onClick={addMetric} className="flex items-center gap-1 text-xs text-brand font-medium hover:underline">
+        <button type="button" onClick={() => addRow(setMetrics)} className="flex items-center gap-1 text-xs font-medium text-brand hover:underline">
           <Plus size={14} /> Add metric
         </button>
       </div>

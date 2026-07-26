@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import AppShell, { CandidateSidebar } from '@/app/candidates/component/AppShell';
 import { candidateApplications, JobApplication } from '@/app/candidates/data/candidate_data';
 
@@ -239,34 +240,46 @@ function ApplicationTimeline({ stage }: { stage: string }) {
       <h3 className="font-bold text-lg mb-6" style={{ color: 'var(--color-foreground)' }}>
         Application Progress
       </h3>
-      <div className="flex items-center justify-between">
-        {stages.map((s, idx) => (
-          <div key={s} className="flex items-center flex-1">
-            <div className="flex flex-col items-center">
+      <div className="space-y-3">
+        {stages.map((s, idx) => {
+          const isCompleted = idx < currentIndex;
+          const isCurrent = idx === currentIndex;
+          const isUpcoming = idx > currentIndex;
+
+          return (
+            <div key={s} className="flex items-center gap-3">
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-sm shrink-0 transition-all"
                 style={{
-                  backgroundColor:
-                    idx <= currentIndex ? 'var(--color-accent)' : 'var(--color-light-border)',
+                  backgroundColor: isCompleted
+                    ? 'var(--color-accent)'
+                    : isCurrent
+                    ? 'var(--color-accent)'
+                    : 'var(--color-light-border)',
+                  color: isUpcoming ? 'var(--color-muted)' : 'white',
                 }}
               >
-                {idx < currentIndex ? <CheckmarkIcon /> : <span>{idx + 1}</span>}
+                {isCompleted ? <CheckmarkIcon /> : <span>{idx + 1}</span>}
               </div>
-              <p className="text-xs font-semibold mt-2 capitalize" style={{ color: 'var(--color-foreground)' }}>
-                {s}
-              </p>
+              <div className="flex-1">
+                <div
+                  className="rounded-xl px-4 py-3 transition-all"
+                  style={{
+                    backgroundColor: isCurrent ? 'var(--color-accent-soft)' : 'var(--color-primary)',
+                    borderLeft: isCurrent ? '3px solid var(--color-accent)' : 'none',
+                  }}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--color-muted)' }}>
+                    {isCompleted ? '✓ Completed' : isCurrent ? '◆ Current' : '○ Upcoming'}
+                  </p>
+                  <p className="font-semibold capitalize" style={{ color: 'var(--color-foreground)' }}>
+                    {s}
+                  </p>
+                </div>
+              </div>
             </div>
-            {idx < stages.length - 1 && (
-              <div
-                className="flex-1 h-1 mx-2 mt-5"
-                style={{
-                  backgroundColor:
-                    idx < currentIndex ? 'var(--color-accent)' : 'var(--color-light-border)',
-                }}
-              />
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -371,6 +384,7 @@ interface ApplicationDetailsProps {
 }
 
 export default function Page({ params }: { params: Promise<ApplicationDetailsProps> }) {
+  const router = useRouter();
   const { id } = use(params);
   const application = useMemo(() => {
     return candidateApplications.find((app) => app.id === id);
@@ -410,20 +424,39 @@ export default function Page({ params }: { params: Promise<ApplicationDetailsPro
           <CandidateSidebar />
 
           {/* Right Content */}
-          <div className="col-span-3 space-y-6">
-            {/* Header Card */}
-            <div className="bg-card rounded-2xl p-8 shadow-sm border" style={{ borderColor: 'var(--color-light-border)' }}>
+          <div className="col-span-3">
+            {/* Back Button */}
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 mb-6 font-semibold transition-colors hover:opacity-70"
+              style={{ color: 'var(--color-accent)' }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Applications
+            </button>
+
+            {/* Main Content */}
+            <div className="space-y-6">
+              {/* Header Card */}
+              <div className="bg-card rounded-2xl p-8 shadow-sm border" style={{ borderColor: 'var(--color-light-border)' }}>
               <div className="flex items-start justify-between mb-6">
-                <div>
-                  <p className="text-xs font-bold tracking-wide mb-2" style={{ color: 'var(--color-muted)' }}>
-                    {application.stage.toUpperCase()} STAGE
-                  </p>
-                  <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-foreground)' }}>
-                    {application.jobTitle}
-                  </h1>
-                  <p className="text-lg mb-4" style={{ color: 'var(--color-accent)' }}>
-                    {application.company}
-                  </p>
+                <div className="flex items-start gap-4 flex-1">
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center shrink-0 overflow-hidden bg-transparent">
+                    <img src={application.logo} alt={application.company} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold tracking-wide mb-2" style={{ color: 'var(--color-muted)' }}>
+                      {application.stage.toUpperCase()} STAGE
+                    </p>
+                    <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-foreground)' }}>
+                      {application.jobTitle}
+                    </h1>
+                    <p className="text-lg mb-4" style={{ color: 'var(--color-accent)' }}>
+                      {application.company}
+                    </p>
+                  </div>
                 </div>
                 <div
                   className="flex flex-col items-center justify-center w-20 h-20 rounded-2xl text-white font-bold text-2xl shadow-md"
@@ -611,6 +644,7 @@ export default function Page({ params }: { params: Promise<ApplicationDetailsPro
                   </button>
                 </>
               )}
+            </div>
             </div>
           </div>
         </div>

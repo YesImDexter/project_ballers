@@ -24,7 +24,7 @@ export const candidateApplications: JobApplication[] = [
     location: 'Singapore / KL',
     stage: 'offer',
     fit: 84,
-    logo: 'G',
+    logo: '/images/applications/grab.png',
   },
   {
     id: '2',
@@ -36,7 +36,7 @@ export const candidateApplications: JobApplication[] = [
     location: 'Singapore',
     stage: 'interview',
     fit: 78,
-    logo: 'T',
+    logo: '/images/applications/tiktok.png',
   },
   {
     id: '3',
@@ -48,6 +48,6 @@ export const candidateApplications: JobApplication[] = [
     location: 'Kuala Lumpur',
     stage: 'screening',
     fit: 91,
-    logo: 'S',
+    logo: '/images/applications/shopee.png',
   },
 ];
