@@ -303,9 +303,7 @@ export default function Page() {
                   {candidateApplications.map((application) => (
                     <div key={application.id} className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0 md:flex-row md:items-center">
                       <div className="flex min-w-0 flex-1 items-center gap-3">
-                        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent text-sm font-bold text-secondary">
-                          {application.logo}
-                        </span>
+                        <img src={application.logo} alt={application.company} className="w-10 h-10 rounded-xl shrink-0 object-cover" />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold text-accent">{application.jobTitle}</p>
                           <p className="truncate text-xs text-muted">{application.company} · {application.location}</p>
