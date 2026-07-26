@@ -1,34 +1,49 @@
+﻿import Link from "next/link";
+
 export default function Header() {
   return (
-    <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+    <header className="sticky top-0 z-50 border-b border-light-border bg-white/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="text-2xl font-bold text-gray-900">
-            Career<span className="text-amber-600">OS</span>
-          </div>
+          <Link href="/" className="text-2xl font-bold text-accent">
+            Career<span className="text-brand">OS</span>
+          </Link>
 
-          {/* Right side - Navigation and Buttons */}
           <div className="flex items-center gap-8">
-            {/* <nav className="hidden sm:flex items-center gap-6">
-              <a href="#" className="text-sm cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+            <nav className="hidden items-center gap-6 sm:flex" aria-label="Primary">
+              <Link
+                href="/#candidates"
+                className="text-sm font-medium text-muted transition hover:text-accent"
+              >
                 For talent
-              </a>
-              <a href="#" className="text-sm cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+              </Link>
+              <Link
+                href="/#employers"
+                className="text-sm font-medium text-muted transition hover:text-accent"
+              >
                 For employers
-              </a>
-              <a href="#" className="text-sm cursor-pointer font-medium text-gray-700 hover:text-gray-900">
-                For universities
-              </a>
-            </nav> */}
+              </Link>
+              <Link
+                href="/#matching"
+                className="text-sm font-medium text-muted transition hover:text-accent"
+              >
+                Matching
+              </Link>
+            </nav>
 
             <div className="flex items-center gap-3">
-              <button className="text-sm cursor-pointer font-medium text-gray-700 hover:text-gray-900 px-4 py-2">
+              <Link
+                href="/auth?mode=login"
+                className="px-4 py-2 text-sm font-medium text-muted transition hover:text-accent"
+              >
                 Log in
-              </button>
-              <button className="inline-flex cursor-pointer items-center justify-center rounded-full bg-gray-900 px-6 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+              </Link>
+              <Link
+                href="/auth?mode=register"
+                className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+              >
                 Get started
-              </button>
+              </Link>
             </div>
           </div>
         </div>

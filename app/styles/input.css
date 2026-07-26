@@ -3,15 +3,3 @@
 .page-section {
     @apply py-12 flex justify-center px-4 sm:px-6 lg:py-16 lg:px-8;
 }
-
-.bg-main {
-    @apply bg-black;
-}
-
-.accent-color {
-    @apply text-yellow-500;
-}
-
-.ring-accent-color {
-    @apply focus:ring-yellow-500;
-}
