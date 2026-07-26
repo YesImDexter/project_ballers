@@ -6,6 +6,7 @@ import { z } from "zod"
 import { Input } from "@/app/components/ui/input"
 import { Button } from "@/app/components/ui/button"
 import { Label } from "@/app/components/ui/label"
+import { Textarea } from "@/app/components/ui/textarea"
 
 const companyInfoSchema = z.object({
   name: z.string().min(1, "Required"),
@@ -45,7 +46,7 @@ export function CompanyInfoForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label>Company name</Label>
           <Input {...register("name")} />
@@ -79,20 +80,12 @@ export function CompanyInfoForm({
       </div>
       <div className="space-y-1.5">
         <Label>About</Label>
-        <textarea
-          {...register("about")}
-          className="w-full rounded-xl border border-soft-border bg-card px-3 py-2 text-sm outline-none resize-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
-          rows={3}
-        />
+        <Textarea {...register("about")} className="resize-none" rows={3} />
         {errors.about && <p className="text-xs text-destructive">{errors.about.message}</p>}
       </div>
       <div className="space-y-1.5">
         <Label>Hiring focus</Label>
-        <textarea
-          {...register("hiringFocus")}
-          className="w-full rounded-xl border border-soft-border bg-card px-3 py-2 text-sm outline-none resize-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
-          rows={2}
-        />
+        <Textarea {...register("hiringFocus")} className="resize-none" rows={2} />
         {errors.hiringFocus && <p className="text-xs text-destructive">{errors.hiringFocus.message}</p>}
       </div>
       <div className="space-y-1.5">

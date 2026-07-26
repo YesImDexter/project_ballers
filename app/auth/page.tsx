@@ -4,7 +4,7 @@ import { AuthPageContent } from "./AuthPageContent"
 export default function AuthPage() {
   return (
     <div className="min-h-screen flex">
-      <div className="bg-accent p-10 flex flex-col justify-between gap-4 w-110">
+      <div className="bg-accent p-10 flex flex-col justify-between gap-4 w-110 max-lg:hidden">
         <div className="text-2xl font-bold text-white">
           Career<span className="text-brand">OS</span>
         </div>

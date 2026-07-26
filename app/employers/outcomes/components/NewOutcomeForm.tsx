@@ -6,13 +6,15 @@ import { z } from "zod"
 import { Button } from "@/app/components/ui/button"
 import { Input } from "@/app/components/ui/input"
 import { Label } from "@/app/components/ui/label"
-import { Star } from "lucide-react"
+import { Textarea } from "@/app/components/ui/textarea"
+import { ChevronDown, Star } from "lucide-react"
 import { useState } from "react"
 
 const newOutcomeSchema = z.object({
   candidateName: z.string().min(1, "Candidate name is required"),
   role: z.string().min(1, "Role is required"),
   outcome: z.enum(["Hired", "Passed"]),
+  rating: z.number().min(1, "Rating is required").max(5),
   feedback: z.string().min(10, "Feedback must be at least 10 characters"),
   date: z.string().min(1, "Date is required"),
 })
@@ -24,23 +26,24 @@ export function NewOutcomeForm({ onClose }: { onClose: () => void }) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<NewOutcomeValues>({
     resolver: zodResolver(newOutcomeSchema),
-    defaultValues: { candidateName: "", role: "", outcome: "Hired", feedback: "", date: new Date().toISOString().split("T")[0] },
+    defaultValues: { candidateName: "", role: "", outcome: "Hired", rating: 0, feedback: "", date: new Date().toISOString().split("T")[0] },
   })
 
-  const [rating, setRating] = useState(0)
+  const rating = watch("rating")
   const [hoveredStar, setHoveredStar] = useState(0)
 
   const onSubmit = async (data: NewOutcomeValues) => {
-    console.log("New outcome:", { ...data, rating })
+    console.log("New outcome:", data)
     await new Promise((r) => setTimeout(r, 500))
     onClose()
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl space-y-6">
       <div className="space-y-1.5">
         <Label>Candidate name</Label>
         <Input {...register("candidateName")} placeholder="e.g., Devon Park" />
@@ -55,13 +58,16 @@ export function NewOutcomeForm({ onClose }: { onClose: () => void }) {
 
       <div className="space-y-1.5">
         <Label>Outcome</Label>
-        <select
-          {...register("outcome")}
-          className="w-full rounded-full border border-soft-border bg-card px-3 py-2 text-sm outline-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          <option value="Hired">Hired</option>
-          <option value="Passed">Passed</option>
-        </select>
+        <div className="relative">
+          <select
+            {...register("outcome")}
+            className="w-full appearance-none rounded-2xl border border-soft-border bg-secondary px-4 py-2.5 pr-10 text-sm outline-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            <option value="Hired">Hired</option>
+            <option value="Passed">Passed</option>
+          </select>
+          <ChevronDown size={16} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted" />
+        </div>
         {errors.outcome && <p className="text-xs text-destructive">{errors.outcome.message}</p>}
       </div>
 
@@ -74,25 +80,28 @@ export function NewOutcomeForm({ onClose }: { onClose: () => void }) {
               type="button"
               onMouseEnter={() => setHoveredStar(star)}
               onMouseLeave={() => setHoveredStar(0)}
-              onClick={() => setRating(star)}
+              onClick={() => setValue("rating", star, { shouldValidate: true })}
+              aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+              aria-pressed={rating === star}
               className="transition-colors"
             >
               <Star
                 size={24}
-                className={star <= (hoveredStar || rating) ? "fill-amber-400 text-amber-400" : "text-soft-border"}
+                className={star <= (hoveredStar || rating) ? "fill-signal-amber text-signal-amber" : "text-soft-border"}
               />
             </button>
           ))}
         </div>
         <p className="text-xs text-muted">{rating > 0 ? `${rating}/5` : "Click to rate"}</p>
+        {errors.rating && <p className="text-xs text-destructive">{errors.rating.message}</p>}
       </div>
 
       <div className="space-y-1.5">
         <Label>Feedback</Label>
-        <textarea
+        <Textarea
           {...register("feedback")}
           placeholder="What worked? What didn't? Any notable signals..."
-          className="w-full rounded-xl border border-soft-border bg-card px-3 py-2 text-sm outline-none resize-none transition-colors focus-visible:border-accent focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="resize-none"
           rows={4}
         />
         {errors.feedback && <p className="text-xs text-destructive">{errors.feedback.message}</p>}

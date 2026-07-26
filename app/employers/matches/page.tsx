@@ -1,12 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { demandTickets, statusConfig } from "@/app/employers/data/demands_data";
 import { candidateMatches } from "@/app/employers/data/matches_data";
+import { chatCandidates } from "@/app/employers/data/chat_data";
 import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import { Input } from "@/app/components/ui/input";
 
 type MatchTab = "by_demand" | "mutual";
+
+const mutualCandidateNames = chatCandidates.map((c) => c.name);
+
+// Matches and chat use different id spaces; bridge by candidate name.
+function chatHrefFor(name: string) {
+  const chatCandidate = chatCandidates.find((c) => c.name === name);
+  return chatCandidate
+    ? `/employers/chat?candidate=${chatCandidate.id}`
+    : "/employers/chat";
+}
 
 const statCards = [
   {
@@ -31,16 +44,26 @@ const statCards = [
   {
     key: "mutualMatches",
     label: "Mutual matches",
-    hint: "3 unique candidates in pool",
+    hint: "Unique candidates in pool",
     className: "bg-pastel-purple border-pastel-purple",
   },
 ] as const;
 
-export default function MatchesPage() {
+function MatchesContent() {
+  const searchParams = useSearchParams();
+  const ticketParam = searchParams.get("ticket");
+  const validTicketParam = demandTickets.some((t) => t.id === ticketParam)
+    ? ticketParam
+    : null;
+
   const [tab, setTab] = useState<MatchTab>("by_demand");
-  const [expanded, setExpanded] = useState<string[]>(["d1"]);
+  const [expanded, setExpanded] = useState<string[]>([
+    validTicketParam ?? "d1",
+  ]);
   const [search, setSearch] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<string | null>(
+    validTicketParam,
+  );
 
   const stats = {
     activeTickets: demandTickets.filter((t) => t.matchesCount > 0).length,
@@ -51,14 +74,13 @@ export default function MatchesPage() {
       candidateMatches.reduce((sum, m) => sum + m.score, 0) /
         candidateMatches.length,
     ),
-    mutualMatches: 2,
+    mutualMatches: mutualCandidateNames.length,
   };
 
   const filteredTickets = selectedTicket
     ? demandTickets.filter((t) => t.id === selectedTicket)
     : demandTickets;
 
-  const mutualCandidateNames = ["Maya Rodriguez", "Devon Park"];
   const mutualMatches = candidateMatches
     .filter((match) => mutualCandidateNames.includes(match.name))
     .sort((a, b) => b.score - a.score)
@@ -75,6 +97,11 @@ export default function MatchesPage() {
         ),
     );
 
+  const switchTab = (next: MatchTab) => {
+    setTab(next);
+    setSearch("");
+  };
+
   const toggleExpand = (id: string) => {
     setExpanded((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
@@ -90,8 +117,8 @@ export default function MatchesPage() {
 
   return (
     <div className="flex-1 bg-primary">
-      <div className="px-8 py-6">
-        <h1 className="text-[34px] font-bold leading-tight text-accent">
+      <div className="px-4 py-6 sm:px-8">
+        <h1 className="font-headings text-3xl font-bold leading-tight text-accent">
           Candidate Matches
         </h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">
@@ -100,8 +127,8 @@ export default function MatchesPage() {
         </p>
       </div>
 
-      <div className="space-y-6 px-8 pb-8">
-        <div className="grid grid-cols-4 gap-4">
+      <div className="space-y-6 px-4 pb-8 sm:px-8">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {statCards.map((card) => (
             <div
               key={card.key}
@@ -120,22 +147,22 @@ export default function MatchesPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          <div className="inline-flex rounded-full bg-card p-1 shadow-card">
+          <div className="inline-flex rounded-full bg-secondary p-1 shadow-card">
             <button
-              onClick={() => setTab("by_demand")}
+              onClick={() => switchTab("by_demand")}
               className={`h-9 rounded-full px-4 text-sm font-medium transition-colors ${
                 tab === "by_demand"
-                  ? "bg-gradient-to-r from-[#111] to-[#1f2937] text-white shadow-card"
+                  ? "bg-accent text-secondary shadow-card"
                   : "text-muted hover:text-accent"
               }`}
             >
               By demand ticket
             </button>
             <button
-              onClick={() => setTab("mutual")}
+              onClick={() => switchTab("mutual")}
               className={`h-9 rounded-full px-4 text-sm font-medium transition-colors ${
                 tab === "mutual"
-                  ? "bg-gradient-to-r from-[#111] to-[#1f2937] text-white shadow-card"
+                  ? "bg-accent text-secondary shadow-card"
                   : "text-muted hover:text-accent"
               }`}
             >
@@ -154,8 +181,8 @@ export default function MatchesPage() {
                 onClick={() => setSelectedTicket(null)}
                 className={`h-9 rounded-full border px-3.5 text-xs transition-colors ${
                   selectedTicket === null
-                    ? "border-accent bg-accent text-white"
-                    : "border-soft-border bg-card text-[#374151] hover:bg-soft-surface"
+                    ? "border-accent bg-accent text-secondary"
+                    : "border-soft-border bg-secondary text-accent hover:bg-soft-surface"
                 }`}
               >
                 All tickets{" "}
@@ -169,8 +196,8 @@ export default function MatchesPage() {
                   onClick={() => setSelectedTicket(ticket.id)}
                   className={`h-9 max-w-[220px] truncate rounded-full border px-3.5 text-xs transition-colors ${
                     selectedTicket === ticket.id
-                      ? "border-accent bg-accent text-white"
-                      : "border-soft-border bg-card text-[#374151] hover:bg-soft-surface"
+                      ? "border-accent bg-accent text-secondary"
+                      : "border-soft-border bg-secondary text-accent hover:bg-soft-surface"
                   }`}
                 >
                   {ticket.title}{" "}
@@ -183,17 +210,17 @@ export default function MatchesPage() {
                   </span>
                 </button>
               ))}
-              <div className="relative ml-auto">
+              <div className="relative w-full sm:ml-auto sm:w-64">
                 <Search
                   size={15}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                  className="absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted"
                 />
-                <input
+                <Input
                   type="text"
                   placeholder="Filter candidates…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="h-10 w-64 rounded-xl border border-soft-border bg-card pl-9 pr-3 text-sm text-accent outline-none transition-colors placeholder:text-muted focus:border-accent"
+                  className="!bg-secondary !pl-9"
                 />
               </div>
             </>
@@ -201,8 +228,8 @@ export default function MatchesPage() {
         </div>
 
         {tab === "mutual" ? (
-          <div className="overflow-hidden rounded-2xl bg-card shadow-card">
-            <div className="flex items-center justify-between border-b border-soft-row-border p-5">
+          <div className="overflow-hidden rounded-2xl bg-secondary shadow-card">
+            <div className="flex items-center justify-between gap-3 border-b border-soft-row-border p-5">
               <div>
                 <p className="text-xs font-medium uppercase tracking-widest text-muted">
                   Mutual matches
@@ -211,7 +238,7 @@ export default function MatchesPage() {
                   Candidates who swiped back
                 </h2>
               </div>
-              <span className="rounded-full bg-pastel-purple px-2.5 py-1 text-xs font-medium text-signal-purple">
+              <span className="shrink-0 rounded-full bg-pastel-purple px-2.5 py-1 text-xs font-medium text-signal-purple">
                 {mutualMatches.length} mutual
               </span>
             </div>
@@ -220,10 +247,10 @@ export default function MatchesPage() {
                 mutualMatches.map((match) => (
                   <Link
                     key={match.id}
-                    href="/employers/chat"
-                    className="flex items-center gap-4 p-5 transition-colors hover:bg-soft-hover"
+                    href={chatHrefFor(match.name)}
+                    className="flex flex-col gap-4 p-5 transition-colors hover:bg-soft-hover sm:flex-row sm:items-center"
                   >
-                    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#111] to-[#1f2937] font-headings text-sm font-bold text-white">
+                    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-accent font-headings text-sm font-bold text-secondary">
                       {match.initials}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -250,7 +277,7 @@ export default function MatchesPage() {
                         ))}
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p
                         className={`font-headings text-2xl font-bold ${matchScoreClass(match.score)}`}
                       >
@@ -289,7 +316,7 @@ export default function MatchesPage() {
               return (
                 <div
                   key={ticket.id}
-                  className="overflow-hidden rounded-2xl bg-card shadow-card"
+                  className="overflow-hidden rounded-2xl bg-secondary shadow-card"
                 >
                   <button
                     onClick={() => toggleExpand(ticket.id)}
@@ -328,8 +355,8 @@ export default function MatchesPage() {
                   </button>
 
                   {isExpanded && (
-                    <div className="border-t border-soft-row-border overflow-x-auto">
-                      <table className="w-full text-sm">
+                    <div className="overflow-x-auto border-t border-soft-row-border">
+                      <table className="w-full min-w-150 text-sm">
                         <thead className="bg-soft-hover">
                           <tr className="text-left text-[10px] uppercase tracking-widest text-muted">
                             <th className="px-5 py-2.5 font-medium">
@@ -351,10 +378,10 @@ export default function MatchesPage() {
                             >
                               <td className="px-5 py-4">
                                 <Link
-                                  href="/employers/chat"
+                                  href={chatHrefFor(match.name)}
                                   className="group flex items-center gap-3"
                                 >
-                                  <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#111] to-[#1f2937] font-headings text-sm font-bold text-white">
+                                  <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent font-headings text-sm font-bold text-secondary">
                                     {match.initials}
                                   </div>
                                   <div>
@@ -394,7 +421,7 @@ export default function MatchesPage() {
                               </td>
                               <td className="px-5 py-4">
                                 <Link
-                                  href="/employers/chat"
+                                  href={chatHrefFor(match.name)}
                                   className="text-xs font-medium text-brand hover:underline"
                                 >
                                   View
@@ -413,5 +440,13 @@ export default function MatchesPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function MatchesPage() {
+  return (
+    <Suspense>
+      <MatchesContent />
+    </Suspense>
   );
 }
