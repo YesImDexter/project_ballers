@@ -8,6 +8,8 @@ interface Milestone {
   title: string;
   date: string;
   completed: boolean;
+  color: string;
+  description?: string;
 }
 
 interface NextMilestoneData {
@@ -17,28 +19,59 @@ interface NextMilestoneData {
   actions: string[];
 }
 
-const pastMilestones: Milestone[] = [
+const careerMilestones: Milestone[] = [
   {
     id: '1',
-    title: 'Joined as Junior Developer',
+    title: 'Junior Developer',
     date: 'Jan 2023',
     completed: true,
+    color: 'from-blue-400 to-blue-600',
+    description: 'Started career journey',
   },
   {
     id: '2',
-    title: 'Completed Onboarding Certification',
+    title: 'Onboarding Cert',
     date: 'Jun 2023',
     completed: true,
+    color: 'from-cyan-400 to-cyan-600',
+    description: 'Completed fundamentals',
   },
   {
     id: '3',
-    title: 'Promoted to Mid-Level Developer',
+    title: 'Mid-Level Dev',
     date: 'Mar 2025',
     completed: true,
+    color: 'from-emerald-400 to-emerald-600',
+    description: 'Current position',
+  },
+  {
+    id: '4',
+    title: 'Senior Developer',
+    date: 'Q3 2025',
+    completed: false,
+    color: 'from-amber-400 to-amber-600',
+    description: 'Next milestone',
+  },
+  {
+    id: '5',
+    title: 'Staff Engineer',
+    date: 'Q4 2026',
+    completed: false,
+    color: 'from-orange-400 to-orange-600',
+    description: '12+ months ahead',
+  },
+  {
+    id: '6',
+    title: 'Principal Engineer',
+    date: '2027+',
+    completed: false,
+    color: 'from-purple-400 to-purple-600',
+    description: 'Long-term vision',
   },
 ];
 
 const currentPosition = 'Mid-Level Developer';
+const currentMilestoneIndex = 2;
 
 const nextMilestone: NextMilestoneData = {
   title: 'Senior Developer',
@@ -772,174 +805,189 @@ export default function Page() {
             <div className="space-y-8">
               {/* Career Path Visualization */}
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
-                {/* Desktop Path (Horizontal) */}
+                {/* Desktop Path (Horizontal Timeline) */}
                 <div className="hidden md:block">
-                  <div className="relative w-48 h-48">
-                    {/* SVG Path */}
-                    <svg
-                      className="w-full h-full"
-                      viewBox="0 0 300 300"
-                      preserveAspectRatio="xMidYMid meet"
-                      style={{ position: 'absolute', pointerEvents: 'none' }}
-                    >
-                      <defs>
-                        <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset={`${progressPercent}%`} stopColor="var(--color-accent)" stopOpacity="1" />
-                          <stop offset={`${progressPercent}%`} stopColor="var(--color-light-border)" stopOpacity="0.3" />
-                          <stop offset="100%" stopColor="var(--color-light-border)" stopOpacity="0.3" />
-                        </linearGradient>
-                      </defs>
-                      <path
-                        d="M 50 50 Q 150 100, 250 250"
-                        stroke="url(#pathGradient)"
-                        strokeWidth="4"
-                        fill="none"
-                        strokeLinecap="round"
+                  <div className="mb-12">
+                    <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--color-foreground)' }}>
+                      Your Career Trajectory
+                    </h3>
+                    
+                    {/* Timeline Container */}
+                    <div className="relative">
+                      {/* Connecting Line */}
+                      <div 
+                        className="absolute top-6 left-0 right-0 h-1 rounded-full"
+                        style={{ 
+                          background: 'linear-gradient(to right, #3b82f6, #06b6d4, #10b981, #f59e0b, #f97316, #a855f7)',
+                        }}
                       />
-                    </svg>
-
-                    {/* Milestone Nodes */}
-                    <div className="absolute inset-0 flex flex-col justify-between items-start px-2 py-2 z-10">
-                      {/* Current Milestone */}
-                      <div className="flex flex-col items-start">
-                        <div
-                          className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg animate-pulse transition-all"
-                          style={{
-                            backgroundColor: 'var(--color-accent)',
-                            animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                          }}
-                        >
-                          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                        <p className="mt-2 text-xs font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                          {currentPosition}
-                        </p>
-                        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                          You are here
-                        </p>
-                      </div>
-
-                      {/* Next Milestone */}
-                      <div className="flex flex-col items-end">
-                        <div
-                          className="w-12 h-12 rounded-full flex items-center justify-center shadow-md transition-all hover:shadow-lg"
-                          style={{
-                            backgroundColor: 'var(--color-accent-soft)',
-                            color: 'var(--color-near-black)',
-                            boxShadow: `0 0 20px rgba(var(--color-accent), 0.3)`,
-                          }}
-                        >
-                          <ArrowRightIcon />
-                        </div>
-                        <p className="mt-2 text-xs font-semibold text-right" style={{ color: 'var(--color-foreground)' }}>
-                          {nextMilestone.title}
-                        </p>
-                        <p className="text-xs text-right" style={{ color: 'var(--color-muted)' }}>
-                          Next step
-                        </p>
+                      
+                      {/* Milestone Nodes */}
+                      <div className="relative flex justify-between items-start">
+                        {careerMilestones.map((milestone, idx) => {
+                          const isCurrent = idx === currentMilestoneIndex;
+                          const isCompleted = milestone.completed;
+                          const [fromColor, toColor] = milestone.color.split(' ');
+                          
+                          return (
+                            <div 
+                              key={milestone.id}
+                              className="flex flex-col items-center group cursor-pointer transition-all hover:scale-110"
+                            >
+                              {/* Milestone Node */}
+                              <div
+                                className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg mb-3 transition-all border-4 border-card ${
+                                  isCurrent ? 'ring-4 ring-yellow-200 animate-pulse' : ''
+                                } bg-gradient-to-br ${milestone.color}`}
+                              >
+                                {isCompleted ? (
+                                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                ) : (
+                                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="2" />
+                                  </svg>
+                                )}
+                              </div>
+                              
+                              {/* Labels */}
+                              <div className="text-center">
+                                <p className={`text-xs font-bold whitespace-nowrap mb-1 ${
+                                  isCurrent ? 'text-yellow-600' : 'text-gray-600'
+                                }`}>
+                                  {milestone.title}
+                                </p>
+                                <p className="text-xs text-gray-500 whitespace-nowrap">
+                                  {milestone.date}
+                                </p>
+                                {isCurrent && (
+                                  <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                    You are here
+                                  </span>
+                                )}
+                              </div>
+                              
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap -translate-x-1/2 left-1/2">
+                                {milestone.description}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
 
                   {/* Progress Bar Below */}
-                  <div className="mt-8">
-                    <div className="flex justify-between mb-2">
+                  <div className="border-t pt-8" style={{ borderColor: 'var(--color-light-border)' }}>
+                    <div className="flex justify-between mb-3">
                       <p className="text-sm font-medium" style={{ color: 'var(--color-foreground)' }}>
                         Progress toward {nextMilestone.title}
                       </p>
-                      <p className="text-sm font-bold" style={{ color: 'var(--color-accent)' }}>
+                      <p className="text-sm font-bold text-amber-600">
                         {progressPercent}%
                       </p>
                     </div>
                     <div
-                      className="w-full h-2 rounded-full overflow-hidden"
+                      className="w-full h-3 rounded-full overflow-hidden"
                       style={{ backgroundColor: 'var(--color-light-border)' }}
                     >
                       <div
-                        className="h-full rounded-full transition-all duration-1000 ease-out"
+                        className="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-amber-400 to-amber-600"
                         style={{
                           width: `${progressPercent}%`,
-                          backgroundColor: 'var(--color-accent)',
                         }}
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* Mobile Path (Vertical) */}
+                {/* Mobile Path (Vertical Timeline) */}
                 <div className="md:hidden">
-                  <div className="space-y-8">
-                    {/* Current Milestone */}
-                    <div className="flex items-start gap-4">
-                      <div className="flex flex-col items-center">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg"
-                          style={{ backgroundColor: 'var(--color-accent)' }}
-                        >
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                  <h3 className="text-lg font-bold mb-6" style={{ color: 'var(--color-foreground)' }}>
+                    Your Career Trajectory
+                  </h3>
+                  
+                  <div className="space-y-6">
+                    {careerMilestones.map((milestone, idx) => {
+                      const isCurrent = idx === currentMilestoneIndex;
+                      const isCompleted = milestone.completed;
+                      
+                      return (
+                        <div key={milestone.id} className="flex gap-4">
+                          {/* Vertical Line and Node */}
+                          <div className="flex flex-col items-center">
+                            {/* Node */}
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg border-4 border-card bg-gradient-to-br ${milestone.color} ${
+                                isCurrent ? 'ring-4 ring-yellow-200' : ''
+                              }`}
+                            >
+                              {isCompleted ? (
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              ) : (
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="2" />
+                                </svg>
+                              )}
+                            </div>
+                            
+                            {/* Connecting Line */}
+                            {idx < careerMilestones.length - 1 && (
+                              <div
+                                className="w-1 h-16 mt-2"
+                                style={{
+                                  background: `linear-gradient(to bottom, ${milestone.color.split(' ')[0]}, ${careerMilestones[idx + 1].color.split(' ')[0]})`,
+                                }}
+                              />
+                            )}
+                          </div>
+                          
+                          {/* Content */}
+                          <div className="pt-1 flex-1">
+                            <p className={`font-semibold text-sm ${
+                              isCurrent ? 'text-yellow-600' : 'text-gray-700'
+                            }`}>
+                              {milestone.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mb-1">
+                              {milestone.date}
+                            </p>
+                            <p className="text-xs text-gray-600 mb-2">
+                              {milestone.description}
+                            </p>
+                            {isCurrent && (
+                              <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                You are here
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div
-                          className="w-1 flex-1 min-h-32 mt-2"
-                          style={{ backgroundColor: 'var(--color-light-border)' }}
-                        />
-                      </div>
-                      <div className="pt-1 flex-1">
-                        <p className="font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                          {currentPosition}
-                        </p>
-                        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                          You are here
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Next Milestone */}
-                    <div className="flex items-start gap-4">
-                      <div className="flex flex-col items-center">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center"
-                          style={{
-                            backgroundColor: 'var(--color-accent-soft)',
-                            color: 'var(--color-near-black)',
-                          }}
-                        >
-                          <ArrowRightIcon />
-                        </div>
-                      </div>
-                      <div className="pt-1 flex-1">
-                        <p className="font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                          {nextMilestone.title}
-                        </p>
-                        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                          Next step
-                        </p>
-                      </div>
-                    </div>
+                      );
+                    })}
                   </div>
 
                   {/* Mobile Progress Bar */}
-                  <div className="mt-8">
-                    <div className="flex justify-between mb-2">
+                  <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--color-light-border)' }}>
+                    <div className="flex justify-between mb-3">
                       <p className="text-sm font-medium" style={{ color: 'var(--color-foreground)' }}>
                         Progress
                       </p>
-                      <p className="text-sm font-bold" style={{ color: 'var(--color-accent)' }}>
+                      <p className="text-sm font-bold text-amber-600">
                         {progressPercent}%
                       </p>
                     </div>
                     <div
-                      className="w-full h-2 rounded-full overflow-hidden"
+                      className="w-full h-3 rounded-full overflow-hidden"
                       style={{ backgroundColor: 'var(--color-light-border)' }}
                     >
                       <div
-                        className="h-full rounded-full transition-all duration-1000 ease-out"
+                        className="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-amber-400 to-amber-600"
                         style={{
                           width: `${progressPercent}%`,
-                          backgroundColor: 'var(--color-accent)',
                         }}
                       />
                     </div>

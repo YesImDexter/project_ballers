@@ -20,12 +20,11 @@ export function UserProfile() {
   return (
     <div className="bg-secondary border border-light-border rounded-2xl p-6 shadow-sm">
       <div className="flex flex-col items-center text-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-violet-400 to-pink-400 rounded-full mb-4 flex items-center justify-center text-white text-lg font-bold">
-          {profile.name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')}
-        </div>
+        <img
+          src="/images/profile_pic/profile_picture.png"
+          alt={profile.name}
+          className="w-16 h-16 rounded-full mb-4 object-cover"
+        />
         <h3 className="font-semibold text-accent">{profile.name}</h3>
         <p className="text-sm text-muted">{profile.title}</p>
         <a href='/candidates/profile' className="mt-4 w-full bg-accent text-secondary py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90">
@@ -40,15 +39,22 @@ export function ApplicationCards() {
   return (
     <div className="space-y-3">
       {candidateApplications.map((app) => (
-        <div key={app.id} className="bg-secondary border border-light-border rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-          <div className="flex items-start gap-2 mb-2">
-            <div className="w-8 h-8 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 bg-accent">
-              {app.logo}
+        <Link
+          key={app.id}
+          href={`/candidates/activity/applications/${app.id}`}
+          className="block bg-secondary border border-light-border rounded-xl p-3 shadow-sm hover:shadow-lg hover:border-accent transition-all duration-200 group"
+        >
+          <div className="flex items-start gap-2 mb-3">
+            <div className="w-8 h-8 rounded flex items-center justify-center text-white text-xs font-bold shrink-0 bg-transparent overflow-hidden">
+              <img src={app.logo} alt={app.company} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate text-accent">{app.company}</p>
+              <p className="text-xs font-semibold truncate text-accent group-hover:opacity-70">{app.company}</p>
               <p className="text-xs truncate text-muted">{app.jobTitle}</p>
             </div>
+            <svg className="w-4 h-4 text-muted group-hover:text-accent transition-colors shrink-0 mt-0.5 opacity-0 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-muted">{app.fit}% fit</span>
@@ -57,7 +63,7 @@ export function ApplicationCards() {
             </span>
           </div>
           <p className="text-xs text-muted">{app.currency} {app.salaryMin.toLocaleString()}-{app.salaryMax.toLocaleString()}</p>
-        </div>
+        </Link>
       ))}
     </div>
   );

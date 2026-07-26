@@ -111,10 +111,10 @@ export default function Page() {
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex gap-4 flex-1">
                           <div
-                            className="w-14 h-14 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0"
-                            style={{ backgroundColor: 'var(--color-foreground)' }}
-                          >
-                            {application.logo}
+                          className="w-14 h-14 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden"
+                          style={{ backgroundColor: 'transparent' }}
+                        >
+                          <img src={application.logo} alt={application.company} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1">
                             <div className="flex items-baseline gap-2 mb-1">

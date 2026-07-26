@@ -16,6 +16,7 @@ interface Recommendation {
   estimatedTime: string;
   status: RecommendationStatus;
   link: string;
+  image: string;
 }
 
 const recommendations: Recommendation[] = [
@@ -28,6 +29,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '8 weeks',
     status: 'Not started',
     link: '#',
+    image: '/images/recommendations/system-architecture.jpeg',
   },
   {
     id: '2',
@@ -38,6 +40,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '4 weeks',
     status: 'In progress',
     link: '#',
+    image: '/images/recommendations/project-management.jpeg',
   },
   {
     id: '3',
@@ -48,6 +51,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '5 hrs/week',
     status: 'In progress',
     link: '#',
+    image: '/images/recommendations/junior-developer.jpg',
   },
   {
     id: '4',
@@ -58,6 +62,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '6 weeks',
     status: 'Not started',
     link: '#',
+    image: '/images/recommendations/kubernetes.jpeg',
   },
   {
     id: '5',
@@ -68,6 +73,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '10 weeks',
     status: 'Completed',
     link: '#',
+    image: '/images/recommendations/aws.png',
   },
   {
     id: '6',
@@ -78,6 +84,7 @@ const recommendations: Recommendation[] = [
     estimatedTime: '4 weeks',
     status: 'Not started',
     link: '#',
+    image: '/images/recommendations/technical-writing.jpeg',
   },
 ];
 
@@ -219,31 +226,14 @@ export default function Page() {
                     {/* Image Container - Top Half */}
                     <div className="relative h-32 bg-linear-to-br from-gray-200 to-gray-300 overflow-hidden flex items-center justify-center shrink-0">
                       <img
-                        src="/placeholder.jpg"
+                        src={rec.image}
                         alt={rec.title}
-                        className="w-full h-full object-cover opacity-40"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 brightness-50"
                       />
-                      {/* Overlay with Category and Title */}
-                      <div className="absolute inset-0 p-4 flex flex-col justify-end bg-linear-to-t from-black/20 to-transparent">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span
-                            className="px-3 py-1 rounded-full text-xs font-semibold"
-                            style={{
-                              backgroundColor: categoryColors[rec.category].bg,
-                              color: categoryColors[rec.category].text,
-                            }}
-                          >
-                            {rec.category}
-                          </span>
-                          <div
-                            className="w-2 h-2 rounded-full"
-                            style={{ backgroundColor: impactColors[rec.impact] }}
-                            title={`${rec.impact} impact`}
-                          />
-                        </div>
+                      {/* Overlay with Title Only */}
+                      <div className="absolute inset-0 p-4 flex flex-col justify-end bg-linear-to-t from-black/70 via-black/30 to-transparent">
                         <h3
-                          className="text-lg font-semibold group-hover:opacity-80 transition-opacity line-clamp-2"
-                          style={{ color: 'var(--color-foreground)' }}
+                          className="text-lg font-semibold group-hover:opacity-90 transition-opacity line-clamp-2 text-white drop-shadow-lg"
                         >
                           {rec.title}
                         </h3>
@@ -252,6 +242,27 @@ export default function Page() {
 
                     {/* Content Container - Bottom Half */}
                     <div className="p-6 flex flex-col grow">
+                      {/* Category and Impact Badges */}
+                      <div className="mb-4 flex items-center gap-2">
+                        <span
+                          className="px-3 py-1 rounded-full text-xs font-semibold"
+                          style={{
+                            backgroundColor: categoryColors[rec.category].bg,
+                            color: categoryColors[rec.category].text,
+                          }}
+                        >
+                          {rec.category}
+                        </span>
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: impactColors[rec.impact] }}
+                          title={`${rec.impact} impact`}
+                        />
+                        <span className="text-xs font-semibold" style={{ color: impactColors[rec.impact] }}>
+                          {rec.impact} impact
+                        </span>
+                      </div>
+
                       {/* Reason */}
                       <p className="text-sm mb-4 grow" style={{ color: 'var(--color-muted)' }}>
                         {rec.reason}
