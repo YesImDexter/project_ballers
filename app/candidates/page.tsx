@@ -1,11 +1,47 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Building2,
+  CheckCircle2,
+  FileText,
+  Flame,
+  Layers3,
+  MapPin,
+  Route,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp,
+} from 'lucide-react';
+
 import AppShell, { CandidateSidebar } from './component/AppShell';
+import { Badge } from '@/app/components/ui/badge';
+import { Button } from '@/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Progress } from '@/app/components/ui/progress';
+import { candidateApplications, type ApplicationStage } from '@/app/candidates/data/candidate_data';
+import { candidateDetails } from '@/app/candidates/data/candidate_details';
+import { companies } from '@/app/candidates/data/company_data';
+import { artifactDetailData } from '@/app/candidates/data/artifact_data';
+import { matchesData } from '@/app/candidates/data/matches_data';
+import { cn } from '@/lib/utils';
+
+type RecommendationCategory = 'Course' | 'Project' | 'Mentorship' | 'Skill' | 'Certification';
+type ImpactLevel = 'High' | 'Medium' | 'Low';
+type BadgeTone = 'blue' | 'green' | 'orange' | 'purple' | 'pink' | 'amber' | 'red' | 'outline';
+
+interface Recommendation {
+  id: string;
+  category: RecommendationCategory;
+  title: string;
+  impact: ImpactLevel;
+  estimatedTime: string;
+}
 
 const userData = {
-  name: 'Alex',
   currentMilestone: 'Mid-Level Developer',
   nextMilestone: 'Senior Developer',
   progressPercent: 40,
@@ -16,7 +52,7 @@ const activityData = {
   lastActionCompleted: "Completed 'Intro to System Design'",
 };
 
-const topRecommendations = [
+const topRecommendations: Recommendation[] = [
   {
     id: '1',
     category: 'Course',
@@ -40,70 +76,53 @@ const topRecommendations = [
   },
 ];
 
-const notificationsData = [
-  {
-    id: '1',
-    message: 'New course matched to your goal',
-    type: 'course',
-  },
-  {
-    id: '2',
-    message: 'Mentor left you feedback',
-    type: 'feedback',
-  },
-  {
-    id: '3',
-    message: 'Recommendation updated based on profile',
-    type: 'recommendation',
-  },
-];
-
-const categoryColors = {
-  Course: { bg: 'rgba(59, 130, 246, 0.1)', text: 'var(--color-accent)' },
-  Project: { bg: 'rgba(34, 197, 94, 0.1)', text: '#22c55e' },
-  Mentorship: { bg: 'rgba(168, 85, 247, 0.1)', text: '#a855f7' },
-  Skill: { bg: 'rgba(249, 115, 22, 0.1)', text: '#f97316' },
-  Certification: { bg: 'rgba(236, 72, 153, 0.1)', text: '#ec4899' },
+const categoryTone: Record<RecommendationCategory, BadgeTone> = {
+  Course: 'blue',
+  Project: 'green',
+  Mentorship: 'purple',
+  Skill: 'orange',
+  Certification: 'pink',
 };
 
-const impactColors = {
-  High: '#dc2626',
-  Medium: '#f59e0b',
-  Low: '#6b7280',
+const impactDot: Record<ImpactLevel, string> = {
+  High: 'bg-signal-red',
+  Medium: 'bg-signal-amber',
+  Low: 'bg-muted',
 };
 
-function NotificationItem({ notification, onDismiss }: { notification: any; onDismiss: (id: string) => void }) {
-  return (
-    <div className="flex items-start gap-3 p-3 bg-card border rounded-lg" style={{ borderColor: 'var(--color-light-border)' }}>
-      <div
-        className="w-2 h-2 rounded-full mt-1.5 shrink-0"
-        style={{ backgroundColor: 'var(--color-accent)' }}
-      />
-      <p className="text-sm flex-1" style={{ color: 'var(--color-foreground)' }}>
-        {notification.message}
-      </p>
-      <button
-        onClick={() => onDismiss(notification.id)}
-        className="text-xs transition-colors hover:opacity-75"
-        style={{ color: 'var(--color-muted)' }}
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
+const stageTone: Record<ApplicationStage, BadgeTone> = {
+  applied: 'blue',
+  screening: 'amber',
+  interview: 'purple',
+  offer: 'green',
+};
+
+const stageLabels: Record<ApplicationStage, string> = {
+  applied: 'Applied',
+  screening: 'Screening',
+  interview: 'Interview',
+  offer: 'Offer',
+};
+
+const artifacts = Object.values(artifactDetailData);
+const uniqueSkills = Array.from(new Set(artifacts.flatMap((artifact) => artifact.tags.map((tag) => tag.name))));
+const demandMatchCount = artifacts.reduce((total, artifact) => total + artifact.demandMatches.length, 0);
+const averageApplicationFit = Math.round(
+  candidateApplications.reduce((total, application) => total + application.fit, 0) / candidateApplications.length
+);
+const applicationStageCounts = candidateApplications.reduce(
+  (counts, application) => ({ ...counts, [application.stage]: counts[application.stage] + 1 }),
+  { applied: 0, screening: 0, interview: 0, offer: 0 } satisfies Record<ApplicationStage, number>
+);
+const bestMatch = matchesData.reduce((best, match) => (match.matchScore > best.matchScore ? match : best), matchesData[0]);
+const averageMatchScore = Math.round(matchesData.reduce((total, match) => total + match.matchScore, 0) / matchesData.length);
+const topMatches = [...matchesData].sort((a, b) => b.matchScore - a.matchScore).slice(0, 2);
+const totalOpenJobs = companies.reduce((total, company) => total + company.open_jobs, 0);
+const averageCompanyRating = (companies.reduce((total, company) => total + company.ratings, 0) / companies.length).toFixed(1);
+const topSkills = uniqueSkills.slice(0, 6);
+const firstName = candidateDetails.profile.name.split(' ')[0];
 
 export default function Page() {
-  const [dismissedNotifications, setDismissedNotifications] = useState<string[]>([]);
-
-  const handleDismissNotification = (id: string) => {
-    setDismissedNotifications([...dismissedNotifications, id]);
-  };
-
-  const visibleNotifications = notificationsData.filter(
-    (n) => !dismissedNotifications.includes(n.id)
-  );
-
   const today = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
@@ -111,216 +130,293 @@ export default function Page() {
   });
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-primary">
       <AppShell />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-4 gap-6">
-          {/* Left Sidebar */}
+      <div className="mx-auto max-w-7xl px-6 py-7">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-4">
           <CandidateSidebar />
 
-          {/* Right Content */}
-          <div className="col-span-3 space-y-6">
-            {/* Header */}
-            <div>
-              <h1 className="text-4xl font-bold mb-1" style={{ color: 'var(--color-foreground)' }}>
-                Welcome back, {userData.name}
-              </h1>
-              <p style={{ color: 'var(--color-muted)' }}>{today}</p>
-            </div>
-
-            {/* Main Grid: Progress + Quick Actions */}
-            <div className="grid grid-cols-3 gap-6">
-              {/* Progress Snapshot Card (spans 2 cols) */}
-              <div className="col-span-2 bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
-                <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-foreground)' }}>
-                  Your Progress
-                </h2>
-
-                {/* Mini Compass Path */}
-                <div className="mb-6">
-                  <div className="hidden sm:flex items-center justify-between">
-                    {/* Current Node */}
-                    <div className="flex flex-col items-center">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-md"
-                        style={{ backgroundColor: 'var(--color-accent)' }}
-                      >
-                        ✓
-                      </div>
-                      <p className="mt-2 text-sm font-semibold text-center" style={{ color: 'var(--color-foreground)' }}>
-                        {userData.currentMilestone}
-                      </p>
-                    </div>
-
-                    {/* Path Fill */}
-                    <div className="flex-1 mx-4 h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-light-border)' }}>
-                      <div
-                        className="h-full rounded-full transition-all duration-1000"
-                        style={{
-                          width: `${userData.progressPercent}%`,
-                          backgroundColor: 'var(--color-accent)',
-                        }}
-                      />
-                    </div>
-
-                    {/* Next Node */}
-                    <div className="flex flex-col items-center">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center font-bold"
-                        style={{
-                          backgroundColor: 'var(--color-accent-soft)',
-                          color: 'var(--color-near-black)',
-                        }}
-                      >
-                        →
-                      </div>
-                      <p className="mt-2 text-sm font-semibold text-center" style={{ color: 'var(--color-foreground)' }}>
-                        {userData.nextMilestone}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Mobile version */}
-                  <div className="sm:hidden space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
-                        style={{ backgroundColor: 'var(--color-accent)' }}
-                      >
-                        ✓
-                      </div>
-                      <div>
-                        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Current</p>
-                        <p className="text-sm font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                          {userData.currentMilestone}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex justify-center">
-                      <div className="w-1 h-8" style={{ backgroundColor: 'var(--color-accent)' }} />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                        style={{
-                          backgroundColor: 'var(--color-accent-soft)',
-                          color: 'var(--color-near-black)',
-                        }}
-                      >
-                        →
-                      </div>
-                      <div>
-                        <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Next</p>
-                        <p className="text-sm font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                          {userData.nextMilestone}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Progress Label and Button */}
-                <div className="pt-4 border-t" style={{ borderColor: 'var(--color-light-border)' }}>
-                  <p className="text-sm mb-4" style={{ color: 'var(--color-muted)' }}>
-                    <span style={{ color: 'var(--color-accent)', fontWeight: 500 }}>
-                      {userData.progressPercent}%
-                    </span>{' '}
-                    of the way to <span style={{ fontWeight: 500 }}>{userData.nextMilestone}</span>
-                  </p>
-                  <Link href="/candidates/compass">
-                    <button
-                      className="w-full py-2 rounded-lg font-medium transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream text-white"
-                      style={{ backgroundColor: 'var(--color-accent)' }}
-                    >
-                      View Your Journey
-                    </button>
-                  </Link>
-                </div>
+          <div className="space-y-5 lg:col-span-3">
+            <section className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h1 className="font-headings text-3xl font-bold leading-tight text-accent">Welcome back, {firstName}</h1>
+                <p className="mt-1 text-sm text-muted">
+                  {candidateDetails.profile.title} · {candidateDetails.profile.location} · {today}
+                </p>
               </div>
-
-              {/* Activity Stats Card */}
-              <div className="bg-card rounded-lg border p-6 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
-                <h3 className="text-sm font-semibold mb-4" style={{ color: 'var(--color-foreground)' }}>
-                  Your Momentum
-                </h3>
-
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-2xl font-bold" style={{ color: 'var(--color-accent)' }}>
-                      {activityData.daysActive}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                      days active
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold mb-1" style={{ color: 'var(--color-foreground)' }}>
-                      Last completed
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-muted)' }}>
-                      {activityData.lastActionCompleted}
-                    </p>
-                  </div>
-                </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="purple">{userData.progressPercent}% to Senior</Badge>
+                <Badge variant="amber">{candidateApplications.length} applications</Badge>
+                <Badge variant="green">{topRecommendations.length} top actions</Badge>
               </div>
-            </div>
+            </section>
 
-            {/* Next Best Actions */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                  Next Best Actions
-                </h2>
-                <Link href="/candidates/recommendations">
-                  <span
-                    className="text-sm font-medium cursor-pointer transition-opacity hover:opacity-75"
-                    style={{ color: 'var(--color-accent)' }}
-                  >
-                    See all →
+            <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <Card className="p-4">
+                <CardContent className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted">Applications</p>
+                    <p className="mt-2 text-2xl font-bold text-accent">{candidateApplications.length}</p>
+                    <p className="mt-1 text-xs text-muted">{averageApplicationFit}% average fit</p>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-blue text-signal-blue">
+                    <BriefcaseBusiness size={18} />
                   </span>
+                </CardContent>
+              </Card>
+
+              <Card className="p-4">
+                <CardContent className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-muted">Best match</p>
+                    <p className="mt-2 text-2xl font-bold text-accent">{bestMatch.matchScore}%</p>
+                    <p className="mt-1 truncate text-xs text-muted">{bestMatch.company}</p>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-purple text-signal-purple">
+                    <Star size={18} />
+                  </span>
+                </CardContent>
+              </Card>
+
+              <Card className="p-4">
+                <CardContent className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted">Open roles</p>
+                    <p className="mt-2 text-2xl font-bold text-accent">{totalOpenJobs}</p>
+                    <p className="mt-1 text-xs text-muted">{companies.length} companies · {averageCompanyRating}★ avg</p>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-green text-signal-green">
+                    <Building2 size={18} />
+                  </span>
+                </CardContent>
+              </Card>
+
+              <Card className="p-4">
+                <CardContent className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-muted">Skill signals</p>
+                    <p className="mt-2 text-2xl font-bold text-accent">{uniqueSkills.length}</p>
+                    <p className="mt-1 text-xs text-muted">{demandMatchCount} demand matches</p>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-pink text-signal-pink">
+                    <Layers3 size={18} />
+                  </span>
+                </CardContent>
+              </Card>
+            </section>
+
+            <section className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+              <Card className="overflow-hidden p-5 xl:col-span-2">
+                <CardHeader>
+                  <div>
+                    <CardTitle>Your career runway</CardTitle>
+                    <CardDescription>Signal, momentum, and the next milestone in one view.</CardDescription>
+                  </div>
+                  <Badge variant="outline">{userData.progressPercent}% complete</Badge>
+                </CardHeader>
+
+                <CardContent className="mt-6">
+                  <div className="rounded-2xl bg-primary p-4">
+                    <div className="flex flex-col gap-5 md:flex-row md:items-center">
+                      <div className="flex min-w-42 items-center gap-3">
+                        <span className="grid size-10 place-items-center rounded-full bg-accent text-secondary">
+                          <CheckCircle2 size={18} />
+                        </span>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Current</p>
+                          <p className="text-sm font-semibold text-accent">{userData.currentMilestone}</p>
+                        </div>
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex items-center justify-between text-xs text-muted">
+                          <span>Foundation</span>
+                          <span>Leadership-ready</span>
+                        </div>
+                        <Progress value={userData.progressPercent} indicatorClassName="bg-brand" />
+                      </div>
+
+                      <div className="flex min-w-42 items-center gap-3 md:justify-end">
+                        <span className="grid size-10 place-items-center rounded-full bg-brand-soft text-accent">
+                          <Target size={18} />
+                        </span>
+                        <div className="md:text-right">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Next</p>
+                          <p className="text-sm font-semibold text-accent">{userData.nextMilestone}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+
+                <CardFooter className="mt-5 justify-between border-t border-soft-row-border pt-4">
+                  <p className="text-sm text-muted">
+                    Close the architecture gap, then ship one leadership-level project.
+                  </p>
+                  <Button render={<Link href="/candidates/compass" />} nativeButton={false} className="!px-4 !py-2">
+                    View journey <ArrowRight size={14} />
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              <Card className="p-5">
+                <CardHeader>
+                  <div>
+                    <CardTitle className="text-base">Momentum</CardTitle>
+                    <CardDescription>This week</CardDescription>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-blue text-signal-blue">
+                    <Flame size={18} />
+                  </span>
+                </CardHeader>
+
+                <CardContent className="mt-6 space-y-5">
+                  <div className="rounded-2xl bg-pastel-blue p-4">
+                    <p className="text-4xl font-bold text-accent">{activityData.daysActive}</p>
+                    <p className="text-xs font-medium text-muted">days active</p>
+                  </div>
+
+                  <div>
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted">Last completed</p>
+                    <p className="text-sm font-medium text-accent">{activityData.lastActionCompleted}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            <section className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+              <Card className="p-5 xl:col-span-2">
+                <CardHeader>
+                  <div>
+                    <CardTitle className="text-base">Applications pipeline</CardTitle>
+                    <CardDescription>
+                      {applicationStageCounts.offer} offer · {applicationStageCounts.interview} interview · {applicationStageCounts.screening} screening
+                    </CardDescription>
+                  </div>
+                  <Link href="/candidates/activity/applications" className="text-sm font-semibold text-accent hover:text-brand">
+                    See all →
+                  </Link>
+                </CardHeader>
+
+                <CardContent className="mt-4 divide-y divide-soft-row-border">
+                  {candidateApplications.map((application) => (
+                    <div key={application.id} className="flex flex-col gap-3 py-3 first:pt-0 last:pb-0 md:flex-row md:items-center">
+                      <div className="flex min-w-0 flex-1 items-center gap-3">
+                        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent text-sm font-bold text-secondary">
+                          {application.logo}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-accent">{application.jobTitle}</p>
+                          <p className="truncate text-xs text-muted">{application.company} · {application.location}</p>
+                        </div>
+                      </div>
+                      <Badge variant={stageTone[application.stage]}>{stageLabels[application.stage]}</Badge>
+                      <div className="min-w-32 md:w-32">
+                        <div className="mb-1 flex justify-between text-[11px] text-muted">
+                          <span>Fit</span>
+                          <span>{application.fit}%</span>
+                        </div>
+                        <Progress value={application.fit} indicatorClassName={application.fit >= 85 ? 'bg-signal-green' : 'bg-brand'} />
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card className="p-5">
+                <CardHeader>
+                  <div>
+                    <CardTitle className="text-base">Matches + skills</CardTitle>
+                    <CardDescription>{averageMatchScore}% average match</CardDescription>
+                  </div>
+                  <span className="grid size-10 place-items-center rounded-xl bg-pastel-purple text-signal-purple">
+                    <Sparkles size={18} />
+                  </span>
+                </CardHeader>
+
+                <CardContent className="mt-4 space-y-4">
+                  <div className="space-y-3">
+                    {topMatches.map((match) => (
+                      <Link key={match.id} href="/candidates/matches" className="block rounded-2xl bg-primary p-3 transition-colors hover:bg-soft-hover">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-accent">{match.role}</p>
+                            <p className="truncate text-xs text-muted">{match.company} · {match.type}</p>
+                          </div>
+                          <Badge variant="purple">{match.matchScore}%</Badge>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-soft-row-border pt-4">
+                    <div className="mb-2 flex items-center justify-between">
+                      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Top skill signals</p>
+                      <Link href="/candidates/activity/artifacts" className="text-xs font-semibold text-accent hover:text-brand">
+                        Artifacts →
+                      </Link>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {topSkills.map((skill) => (
+                        <Badge key={skill} variant="outline">{skill}</Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="rounded-2xl bg-pastel-amber p-3 text-signal-amber">
+                      <FileText className="mb-2" size={16} />
+                      {artifacts.length} artifacts
+                    </div>
+                    <div className="rounded-2xl bg-pastel-green p-3 text-signal-green">
+                      <MapPin className="mb-2" size={16} />
+                      {candidateDetails.preferences.workStyle} ready
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            <section>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-headings text-xl font-bold text-accent">Next best actions</h2>
+                  <p className="text-sm text-muted">Highest leverage moves for the next milestone.</p>
+                </div>
+                <Link href="/candidates/recommendations" className="text-sm font-semibold text-accent hover:text-brand">
+                  See all →
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {topRecommendations.map((rec) => (
-                  <div
-                    key={rec.id}
-                    className="bg-card rounded-lg border p-4 shadow-sm hover:shadow-md transition-all"
-                    style={{ borderColor: 'var(--color-light-border)' }}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <span
-                        className="px-2 py-1 rounded-full text-xs font-semibold"
-                        style={{
-                          backgroundColor: categoryColors[rec.category as keyof typeof categoryColors]?.bg,
-                          color: categoryColors[rec.category as keyof typeof categoryColors]?.text,
-                        }}
-                      >
-                        {rec.category}
-                      </span>
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: impactColors[rec.impact as keyof typeof impactColors] }}
-                      />
-                    </div>
-                    <h4 className="font-semibold text-sm mb-1 line-clamp-2" style={{ color: 'var(--color-foreground)' }}>
-                      {rec.title}
-                    </h4>
-                    <p className="text-xs mb-3" style={{ color: 'var(--color-muted)' }}>
-                      {rec.estimatedTime}
-                    </p>
-                    <button
-                      className="w-full py-2 rounded-lg text-sm font-medium transition-all hover:opacity-90 text-white"
-                      style={{ backgroundColor: 'var(--color-accent)' }}
-                    >
-                      Start
-                    </button>
-                  </div>
+                  <Card key={rec.id} className="pillar p-4">
+                    <CardContent className="space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <Badge variant={categoryTone[rec.category]}>{rec.category}</Badge>
+                        <span className={cn('mt-1 size-2.5 rounded-full', impactDot[rec.impact])} aria-label={`${rec.impact} impact`} />
+                      </div>
+
+                      <div>
+                        <h3 className="line-clamp-2 text-sm font-semibold text-accent">{rec.title}</h3>
+                        <div className="mt-2 flex items-center gap-2 text-xs text-muted">
+                          <Route size={13} />
+                          <span>{rec.estimatedTime}</span>
+                          <span>·</span>
+                          <TrendingUp size={13} />
+                          <span>{rec.impact} impact</span>
+                        </div>
+                      </div>
+
+                      <Button className="w-full !py-2">
+                        Start <Sparkles size={14} />
+                      </Button>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
