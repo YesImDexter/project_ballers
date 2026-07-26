@@ -1,5 +1,6 @@
 import { hiringOutcomes } from "@/app/employers/data/outcomes_data"
 import { Plus } from "lucide-react"
+import Link from "next/link"
 
 export default function OutcomesPage() {
   return (
@@ -11,9 +12,12 @@ export default function OutcomesPage() {
             Outcomes feed back into matching quality. Record what worked and what didn&apos;t.
           </p>
         </div>
-        <button className="inline-flex h-10 items-center gap-1.5 rounded border-2 border-accent bg-accent px-4 text-sm font-medium text-white transition-opacity hover:opacity-90">
+        <Link
+          href="/employers/outcomes/new"
+          className="inline-flex h-10 items-center gap-1.5 rounded border-2 border-accent bg-accent px-4 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        >
           <Plus size={16} /> Record outcome
-        </button>
+        </Link>
       </div>
 
       <div className="px-8 pb-8">

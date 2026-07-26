@@ -1,8 +1,23 @@
-import { employerCompany } from "@/app/employers/data/company_data"
-import { demandTickets, type DemandStatus } from "@/app/employers/data/demands_data"
-import { candidateMatches } from "@/app/employers/data/matches_data"
-import { notifications } from "@/app/employers/data/notifications_data"
-import { hiringOutcomes } from "@/app/employers/data/outcomes_data"
+"use client";
+
+import { useState, useMemo } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { pipelineHealthData } from "@/app/employers/data/pipeline_health_data";
+import { employerCompany } from "@/app/employers/data/company_data";
+import {
+  demandTickets,
+  type DemandStatus,
+} from "@/app/employers/data/demands_data";
+import { candidateMatches } from "@/app/employers/data/matches_data";
+import { notifications } from "@/app/employers/data/notifications_data";
+import { hiringOutcomes } from "@/app/employers/data/outcomes_data";
 import {
   Activity,
   ArrowLeftRight,
@@ -17,68 +32,193 @@ import {
   Star,
   Target,
   TicketCheck,
+  TrendingUp,
   UserCheck,
   Users,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
 
 const funnelItems = [
-  { label: "Matches surfaced", value: 18, width: "100%", color: "#3B82F6", icon: Users, chip: "bg-blue-100 text-blue-600" },
-  { label: "Mutual swipes", value: 8, width: "44%", color: "#8B5CF6", icon: ArrowLeftRight, chip: "bg-violet-100 text-violet-600" },
-  { label: "Chats opened", value: 6, width: "33%", color: "#10B981", icon: MessageSquare, chip: "bg-emerald-100 text-emerald-600" },
-  { label: "Interviews", value: 4, width: "22%", color: "#F59E0B", icon: Clock, chip: "bg-amber-100 text-amber-700" },
-  { label: "Trials", value: 2, width: "11%", color: "#F97316", icon: FileText, chip: "bg-orange-100 text-orange-700" },
-  { label: "Offers", value: 2, width: "11%", color: "#EC4899", icon: Award, chip: "bg-pink-100 text-pink-700" },
-  { label: "Hires", value: 1, width: "6%", color: "#059669", icon: UserCheck, chip: "bg-green-100 text-green-700" },
-]
+  {
+    label: "Matches surfaced",
+    value: 18,
+    width: "100%",
+    color: "#3B82F6",
+    icon: Users,
+    chip: "bg-blue-100 text-blue-600",
+  },
+  {
+    label: "Mutual swipes",
+    value: 8,
+    width: "44%",
+    color: "#8B5CF6",
+    icon: ArrowLeftRight,
+    chip: "bg-violet-100 text-violet-600",
+  },
+  {
+    label: "Chats opened",
+    value: 6,
+    width: "33%",
+    color: "#10B981",
+    icon: MessageSquare,
+    chip: "bg-emerald-100 text-emerald-600",
+  },
+  {
+    label: "Interviews",
+    value: 4,
+    width: "22%",
+    color: "#F59E0B",
+    icon: Clock,
+    chip: "bg-amber-100 text-amber-700",
+  },
+  {
+    label: "Trials",
+    value: 2,
+    width: "11%",
+    color: "#F97316",
+    icon: FileText,
+    chip: "bg-orange-100 text-orange-700",
+  },
+  {
+    label: "Offers",
+    value: 2,
+    width: "11%",
+    color: "#EC4899",
+    icon: Award,
+    chip: "bg-pink-100 text-pink-700",
+  },
+  {
+    label: "Hires",
+    value: 1,
+    width: "6%",
+    color: "#059669",
+    icon: UserCheck,
+    chip: "bg-green-100 text-green-700",
+  },
+];
 
 const quickActions = [
-  { label: "Post demand", href: "/employers/demands/new", icon: Plus, chip: "bg-[#d1fae5] text-emerald-600" },
-  { label: "Review matches", href: "/employers/matches", icon: Sparkles, chip: "bg-[#e9d5ff] text-violet-600" },
-  { label: "Chat & trials", href: "/employers/chat", icon: MessageSquare, chip: "bg-[#fed7aa] text-orange-700" },
-  { label: "Outcomes", href: "/employers/outcomes", icon: Award, chip: "bg-[#bfdbfe] text-blue-700" },
-]
+  {
+    label: "Post demand",
+    href: "/employers/demands/new",
+    icon: Plus,
+    chip: "bg-[#d1fae5] text-emerald-600",
+  },
+  {
+    label: "Review matches",
+    href: "/employers/matches",
+    icon: Sparkles,
+    chip: "bg-[#e9d5ff] text-violet-600",
+  },
+  {
+    label: "Chat & trials",
+    href: "/employers/chat",
+    icon: MessageSquare,
+    chip: "bg-[#fed7aa] text-orange-700",
+  },
+  {
+    label: "Outcomes",
+    href: "/employers/outcomes",
+    icon: Award,
+    chip: "bg-[#bfdbfe] text-blue-700",
+  },
+];
 
 const notificationStyles = [
   { icon: Sparkles, chip: "bg-purple-100 text-purple-600" },
   { icon: Star, chip: "bg-green-100 text-green-600" },
   { icon: Clock, chip: "bg-amber-100 text-amber-700" },
   { icon: FileText, chip: "bg-red-100 text-red-700" },
-]
+];
 
 const recentActivity = [
-  { event: "Offer extended to Maya Rodriguez", meta: "Northwind · 2h ago", icon: Award, chip: "bg-green-100 text-green-600" },
-  { event: "New mutual match created", meta: "Devon Park · 5h ago", icon: Sparkles, chip: "bg-purple-100 text-purple-600" },
-  { event: "Trial task reviewed · 4.5 / 5", meta: "Self-serve dashboard · 1d ago", icon: Star, chip: "bg-amber-100 text-amber-700" },
-  { event: "Interview round 2 booked", meta: "Riya Patel · 1d ago", icon: Clock, chip: "bg-orange-100 text-orange-700" },
-  { event: "Demand ticket published", meta: "Vendor ingestion · 3d ago", icon: FileText, chip: "bg-blue-100 text-blue-700" },
-  { event: "Devon Park hired — onboarding started", meta: "Backend · 5d ago", icon: Briefcase, chip: "bg-pink-100 text-pink-700" },
-]
+  {
+    event: "Offer extended to Maya Rodriguez",
+    meta: "Northwind · 2h ago",
+    icon: Award,
+    chip: "bg-green-100 text-green-600",
+  },
+  {
+    event: "New mutual match created",
+    meta: "Devon Park · 5h ago",
+    icon: Sparkles,
+    chip: "bg-purple-100 text-purple-600",
+  },
+  {
+    event: "Trial task reviewed · 4.5 / 5",
+    meta: "Self-serve dashboard · 1d ago",
+    icon: Star,
+    chip: "bg-amber-100 text-amber-700",
+  },
+  {
+    event: "Interview round 2 booked",
+    meta: "Riya Patel · 1d ago",
+    icon: Clock,
+    chip: "bg-orange-100 text-orange-700",
+  },
+  {
+    event: "Demand ticket published",
+    meta: "Vendor ingestion · 3d ago",
+    icon: FileText,
+    chip: "bg-blue-100 text-blue-700",
+  },
+  {
+    event: "Devon Park hired — onboarding started",
+    meta: "Backend · 5d ago",
+    icon: Briefcase,
+    chip: "bg-pink-100 text-pink-700",
+  },
+];
 
-const dashboardStatusConfig: Record<DemandStatus, { label: string; className: string }> = {
+const dashboardStatusConfig: Record<
+  DemandStatus,
+  { label: string; className: string }
+> = {
   active: { label: "Active", className: "bg-[#d1fae5] text-emerald-700" },
   in_review: { label: "In Review", className: "bg-[#fef3c7] text-amber-700" },
   draft: { label: "Draft", className: "bg-[#f3f4f6] text-gray-600" },
-}
+};
 
-const cardClass = "bg-white border border-[#e5e7eb] rounded-[24px]"
-const darkCardClass = "bg-[#1f2937] rounded-[24px] text-white"
+const cardClass = "bg-white border border-[#e5e7eb] rounded-[24px]";
+const darkCardClass = "bg-[#1f2937] rounded-[24px] text-white";
 
 export default function EmployerDashboard() {
-  const unreadNotifs = notifications.filter((n) => !n.read)
-  const strongMatches = candidateMatches.filter((m) => m.scoreLabel === "Strong Match")
+  const [activePeriod, setActivePeriod] = useState("1M");
+
+  const now = new Date("2026-07-26");
+  const chartData = useMemo(() => {
+    const msMap: Record<string, number> = {
+      "1D": 1,
+      "1W": 7,
+      "1M": 30,
+      "3M": 90,
+      "1Y": 365,
+      All: 9999,
+    };
+    const days = msMap[activePeriod];
+    const cutoff = new Date(now.getTime() - days * 86400000);
+    return pipelineHealthData.filter((d) => new Date(d.date) >= cutoff);
+  }, [activePeriod]);
+
+  const unreadNotifs = notifications.filter((n) => !n.read);
+  const strongMatches = candidateMatches.filter(
+    (m) => m.scoreLabel === "Strong Match",
+  );
   const topCandidates = candidateMatches
     .filter((m, i, arr) => arr.findIndex((x) => x.name === m.name) === i)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
+    .slice(0, 3);
 
   return (
     <div className="flex-1 bg-primary">
       <div className="flex items-start justify-between p-6">
         <div>
-          <h1 className="text-[34px] font-bold leading-tight text-[#1f2937]">Hiring overview</h1>
+          <h1 className="text-[34px] font-bold leading-tight text-[#1f2937]">
+            Hiring overview
+          </h1>
           <p className="mt-1 text-xs text-gray-500">
-            {employerCompany.name} · {employerCompany.industry} · {employerCompany.teamSize}
+            {employerCompany.name} · {employerCompany.industry} ·{" "}
+            {employerCompany.teamSize}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -106,19 +246,77 @@ export default function EmployerDashboard() {
       </div>
 
       <div className="space-y-6 px-6 pb-8">
-        <div className="grid grid-cols-4 gap-6">
-          <div className={`${darkCardClass} p-6`}>
-            <p className="text-sm text-gray-300">Pipeline health</p>
+        <div className="grid grid-cols-2 gap-6">
+          <div className={`${darkCardClass} p-6 row-span-3 flex flex-col`}>
+            <p className="text-sm text-gray-400 uppercase tracking-widest">
+              Pipeline health
+            </p>
             <div className="mt-3 flex items-end gap-3">
               <p className="text-3xl font-bold text-white">18</p>
-              <p className="pb-1 text-sm text-gray-300">+2 strong this week</p>
+              <div className="bg-white/10 py-1 px-2 rounded-full flex items-center gap-1"><TrendingUp className="h-3 w-3" /><p className="text-xs text-white">+2 strong this week</p></div>
             </div>
-            <p className="mt-4 text-xs text-gray-400">Candidates surfaced across 1 active demand</p>
-            <div className="mt-5 flex gap-1 rounded-full bg-white/10 p-1 text-[10px] text-gray-300">
-              {["1D", "1W", "1M", "3M", "1Y", "All"].map((period, i) => (
+            <p className="mt-1 text-xs text-gray-400">
+              Candidates surfaced across 1 active demand
+            </p>
+            <div className="mt-4 flex-grow">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="pipelineGrad"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="#6366f1"
+                        stopOpacity={0.25}
+                      />
+                      <stop offset="100%" stopColor="#6366f1" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="date" hide />
+                  <YAxis hide domain={["dataMin - 2", "dataMax + 2"]} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "none",
+                      borderRadius: 8,
+                      fontSize: 12,
+                    }}
+                    labelStyle={{ color: "#9ca3af" }}
+                    itemStyle={{ color: "#fff" }}
+                    formatter={(value) => [value, "Candidates"]}
+                    labelFormatter={(label) =>
+                      new Date(label as string).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })
+                    }
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="candidates"
+                    stroke="#6366f1"
+                    strokeWidth={2}
+                    fill="url(#pipelineGrad)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: "#6366f1" }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-2 flex gap-1 rounded-full bg-white/10 p-1 text-[10px] text-gray-300">
+              {["1D", "1W", "1M", "3M", "1Y", "All"].map((period) => (
                 <button
                   key={period}
-                  className={`rounded-full px-2 py-1 ${i === 1 ? "bg-white text-[#1f2937]" : ""}`}
+                  onClick={() => setActivePeriod(period)}
+                  className={`rounded-full px-2 py-1 transition-colors ${activePeriod === period ? "bg-white text-[#1f2937]" : "hover:bg-white/10"}`}
                 >
                   {period}
                 </button>
@@ -138,7 +336,8 @@ export default function EmployerDashboard() {
                 {demandTickets.filter((t) => t.status === "active").length}
               </p>
               <p className="mt-1 text-xs text-[#1f2937]/70">
-                {demandTickets.filter((t) => t.status === "in_review").length} in review
+                {demandTickets.filter((t) => t.status === "in_review").length}{" "}
+                in review
               </p>
             </div>
           </div>
@@ -172,19 +371,21 @@ export default function EmployerDashboard() {
 
         <div className="grid grid-cols-4 gap-4">
           {quickActions.map((action) => {
-            const Icon = action.icon
+            const Icon = action.icon;
             return (
               <Link
                 key={action.href}
                 href={action.href}
                 className={`${cardClass} flex items-center gap-3 px-5 py-4 text-sm font-medium text-[#1f2937] transition-all hover:-translate-y-0.5 hover:shadow-sm`}
               >
-                <span className={`grid size-10 place-items-center rounded-xl ${action.chip}`}>
+                <span
+                  className={`grid size-10 place-items-center rounded-xl ${action.chip}`}
+                >
                   <Icon size={18} />
                 </span>
                 {action.label}
               </Link>
-            )
+            );
           })}
         </div>
 
@@ -193,14 +394,21 @@ export default function EmployerDashboard() {
             <div className={`${cardClass} p-6`}>
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-[#1f2937]">Demand tickets</h2>
-                  <p className="text-xs text-gray-500">Open roles · candidates surfacing in real time</p>
+                  <h2 className="text-xl font-bold text-[#1f2937]">
+                    Demand tickets
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    Open roles · candidates surfacing in real time
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <button className="rounded-full border border-[#e5e7eb] px-3 py-1.5 text-xs text-gray-500">
                     All status
                   </button>
-                  <Link href="/employers/demands" className="text-xs font-medium text-[#1f2937] hover:underline">
+                  <Link
+                    href="/employers/demands"
+                    className="text-xs font-medium text-[#1f2937] hover:underline"
+                  >
                     View all
                   </Link>
                 </div>
@@ -217,19 +425,33 @@ export default function EmployerDashboard() {
                 </thead>
                 <tbody>
                   {demandTickets.map((ticket) => (
-                    <tr key={ticket.id} className="border-b border-[#e5e7eb] last:border-0">
+                    <tr
+                      key={ticket.id}
+                      className="border-b border-[#e5e7eb] last:border-0"
+                    >
                       <td className="py-4">
-                        <p className="font-semibold text-[#111]">{ticket.title}</p>
-                        <p className="mt-1 text-xs text-gray-400">Created {ticket.createdAt}</p>
+                        <p className="font-semibold text-[#111]">
+                          {ticket.title}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-400">
+                          Created {ticket.createdAt}
+                        </p>
                       </td>
                       <td className="py-4">
-                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${dashboardStatusConfig[ticket.status].className}`}>
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${dashboardStatusConfig[ticket.status].className}`}
+                        >
                           {dashboardStatusConfig[ticket.status].label}
                         </span>
                       </td>
-                      <td className="py-4 font-semibold text-[#111]">{ticket.matchesCount}</td>
+                      <td className="py-4 font-semibold text-[#111]">
+                        {ticket.matchesCount}
+                      </td>
                       <td className="py-4">
-                        <Link href="/employers/matches" className="text-xs text-gray-500 hover:text-[#111]">
+                        <Link
+                          href="/employers/matches"
+                          className="text-xs text-gray-500 hover:text-[#111]"
+                        >
                           →
                         </Link>
                       </td>
@@ -245,32 +467,45 @@ export default function EmployerDashboard() {
                   <Activity size={18} />
                 </span>
                 <div>
-                  <h2 className="text-xl font-bold text-[#1f2937]">Hiring funnel</h2>
-                  <p className="text-xs text-gray-500">This month · all demands</p>
+                  <h2 className="text-xl font-bold text-[#1f2937]">
+                    Hiring funnel
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    This month · all demands
+                  </p>
                 </div>
               </div>
               <div className="space-y-4">
                 {funnelItems.map((item) => {
-                  const Icon = item.icon
+                  const Icon = item.icon;
                   return (
                     <div key={item.label} className="flex items-center gap-4">
-                      <span className={`grid size-9 shrink-0 place-items-center rounded-md ${item.chip}`}>
+                      <span
+                        className={`grid size-9 shrink-0 place-items-center rounded-md ${item.chip}`}
+                      >
                         <Icon size={16} />
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="mb-1.5 flex items-center justify-between gap-4">
-                          <p className="text-sm font-medium text-[#111]">{item.label}</p>
-                          <p className="text-sm font-bold text-[#111]">{item.value}</p>
+                          <p className="text-sm font-medium text-[#111]">
+                            {item.label}
+                          </p>
+                          <p className="text-sm font-bold text-[#111]">
+                            {item.value}
+                          </p>
                         </div>
                         <div className="h-2 overflow-hidden rounded-full bg-[#f3f4f6]">
                           <div
                             className="h-full rounded-full transition-all"
-                            style={{ width: item.width, backgroundColor: item.color }}
+                            style={{
+                              width: item.width,
+                              backgroundColor: item.color,
+                            }}
                           />
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -278,12 +513,15 @@ export default function EmployerDashboard() {
 
           <div className="space-y-6">
             <div className={`${darkCardClass} p-6`}>
-              <p className="text-xs uppercase tracking-widest text-gray-400">Action needed</p>
+              <p className="text-xs uppercase tracking-widest text-gray-400">
+                Action needed
+              </p>
               <h3 className="mt-3 text-xl font-bold leading-tight text-white">
                 Review {strongMatches.length} strong candidates
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-400">
-                Surfaced across your active demands. The earlier you swipe, the warmer the intro chat.
+                Surfaced across your active demands. The earlier you swipe, the
+                warmer the intro chat.
               </p>
               <Link
                 href="/employers/matches"
@@ -295,22 +533,37 @@ export default function EmployerDashboard() {
 
             <div className={`${cardClass} p-6`}>
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-[#1f2937]">Top candidates</h2>
-                <Link href="/employers/matches" className="text-xs font-medium text-[#1f2937] hover:underline">
+                <h2 className="text-xl font-bold text-[#1f2937]">
+                  Top candidates
+                </h2>
+                <Link
+                  href="/employers/matches"
+                  className="text-xs font-medium text-[#1f2937] hover:underline"
+                >
                   All
                 </Link>
               </div>
               <div className="space-y-4">
                 {topCandidates.map((c) => (
-                  <Link key={c.id} href="/employers/chat" className="flex items-center gap-3">
+                  <Link
+                    key={c.id}
+                    href="/employers/chat"
+                    className="flex items-center gap-3"
+                  >
                     <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-xs font-bold text-rose-700">
                       {c.initials}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-[#111]">{c.name}</p>
-                      <p className="truncate text-xs text-gray-500">{c.matchReason}</p>
+                      <p className="truncate text-sm font-semibold text-[#111]">
+                        {c.name}
+                      </p>
+                      <p className="truncate text-xs text-gray-500">
+                        {c.matchReason}
+                      </p>
                     </div>
-                    <span className="text-sm font-bold text-green-600">+{c.score}%</span>
+                    <span className="text-sm font-bold text-green-600">
+                      +{c.score}%
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -321,49 +574,64 @@ export default function EmployerDashboard() {
         <div className="grid grid-cols-2 gap-6">
           <div className={`${cardClass} p-6`}>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-[#1f2937]">Notifications</h2>
+              <h2 className="text-xl font-bold text-[#1f2937]">
+                Notifications
+              </h2>
               <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-bold text-[#1f2937]">
                 {unreadNotifs.length} NEW
               </span>
             </div>
             <div className="space-y-4">
               {unreadNotifs.map((n, index) => {
-                const style = notificationStyles[index % notificationStyles.length]
-                const Icon = style.icon
+                const style =
+                  notificationStyles[index % notificationStyles.length];
+                const Icon = style.icon;
                 return (
                   <div key={n.id} className="flex items-start gap-3">
-                    <span className={`grid size-8 shrink-0 place-items-center rounded-md ${style.chip}`}>
+                    <span
+                      className={`grid size-8 shrink-0 place-items-center rounded-md ${style.chip}`}
+                    >
                       <Icon size={15} />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-[#111]">{n.description}</p>
-                      <p className="mt-0.5 text-xs text-gray-500">{n.timeAgo.replace(" ago", "")}</p>
+                      <p className="text-sm font-medium text-[#111]">
+                        {n.description}
+                      </p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        {n.timeAgo.replace(" ago", "")}
+                      </p>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
 
           <div className={`${cardClass} p-6`}>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-[#1f2937]">Recent activity</h2>
+              <h2 className="text-xl font-bold text-[#1f2937]">
+                Recent activity
+              </h2>
               <span className="text-xs text-gray-500">Last 7 days</span>
             </div>
             <div className="space-y-4">
               {recentActivity.map((a) => {
-                const Icon = a.icon
+                const Icon = a.icon;
                 return (
                   <div key={a.event} className="flex items-start gap-3">
-                    <span className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-md ${a.chip}`}>
+                    <span
+                      className={`mt-0.5 grid size-7 shrink-0 place-items-center rounded-md ${a.chip}`}
+                    >
                       <Icon size={14} />
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-[#111]">{a.event}</p>
+                      <p className="text-sm font-medium text-[#111]">
+                        {a.event}
+                      </p>
                       <p className="mt-0.5 text-xs text-gray-500">{a.meta}</p>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -374,5 +642,5 @@ export default function EmployerDashboard() {
         </div>
       </div>
     </div>
-  )
+  );
 }
