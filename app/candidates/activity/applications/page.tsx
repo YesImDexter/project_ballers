@@ -187,7 +187,7 @@ export default function Page() {
                         {application.stage === 'offer' && (
                           <>
                             <Link
-                              href={`/candidates/activity/${application.id}`}
+                              href={`/candidates/activity/applications/${application.id}`}
                               className="text-white px-4 py-2 rounded-lg text-sm font-medium transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream"
                               style={{ backgroundColor: 'var(--color-accent)' }}
                             >
@@ -213,7 +213,7 @@ export default function Page() {
                         {application.stage === 'interview' && (
                           <>
                             <Link
-                              href={`/candidates/activity/${application.id}`}
+                              href={`/candidates/activity/applications/${application.id}`}
                               className="px-4 py-2 rounded-lg text-sm font-medium transition-all border hover:bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream"
                               style={{
                                 borderColor: 'var(--color-light-border)',
@@ -251,7 +251,7 @@ export default function Page() {
                         {application.stage === 'screening' && (
                           <>
                             <Link
-                              href={`/candidates/activity/${application.id}`}
+                              href={`/candidates/activity/applications/${application.id}`}
                               className="px-4 py-2 rounded-lg text-sm font-medium transition-all border hover:bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream"
                               style={{
                                 borderColor: 'var(--color-light-border)',
@@ -280,7 +280,7 @@ export default function Page() {
                         {application.stage === 'applied' && (
                           <>
                             <Link
-                              href={`/candidates/activity/${application.id}`}
+                              href={`/candidates/activity/applications/${application.id}`}
                               className="px-4 py-2 rounded-lg text-sm font-medium transition-all border hover:bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cream"
                               style={{
                                 borderColor: 'var(--color-light-border)',

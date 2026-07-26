@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation"
 const registerSchema = z
   .object({
     role: z.enum(["candidate", "employer"]),
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters").optional(),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
@@ -84,7 +84,7 @@ export function RegisterForm({ defaultRole = "candidate" }: { defaultRole?: "can
     resolver: zodResolver(registerSchema),
     defaultValues: {
       role: defaultRole,
-      name: "",
+      name: defaultRole === "employer" ? "" : undefined,
       email: "",
       password: "",
       confirmPassword: "",
@@ -98,7 +98,11 @@ export function RegisterForm({ defaultRole = "candidate" }: { defaultRole?: "can
   const onSubmit = async (data: RegisterFormValues) => {
     console.log("Register submit:", data)
     await new Promise((r) => setTimeout(r, 1000))
-    router.push(`/${data.role}s`)
+    if (data.role === "candidate") {
+      router.push("/candidates/onboarding")
+    } else {
+      router.push(`/${data.role}s`)
+    }
   }
 
   const roleSuffix = defaultRole === "employer" ? "&role=employer" : ""
@@ -117,7 +121,9 @@ export function RegisterForm({ defaultRole = "candidate" }: { defaultRole?: "can
         onValueChange={(val) => setValue("role", val, { shouldValidate: true })}
       />
 
-      <AuthInput label="Full name" type="text" placeholder="John Doe" error={errors.name?.message} required {...register("name")} />
+      {role === "employer" && (
+        <AuthInput label="Full name" type="text" placeholder="John Doe" error={errors.name?.message} required {...register("name")} />
+      )}
       <AuthInput label="Email" type="email" placeholder="you@example.com" error={errors.email?.message} required {...register("email")} />
       <AuthInput label="Password" type="password" placeholder="••••••••" error={errors.password?.message} required {...register("password")} />
       <AuthInput label="Confirm password" type="password" placeholder="••••••••" error={errors.confirmPassword?.message} required {...register("confirmPassword")} />

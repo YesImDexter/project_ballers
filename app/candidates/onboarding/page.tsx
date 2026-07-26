@@ -106,8 +106,6 @@ function Toggle({
 export default function PageName() {
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  // About You
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -140,30 +138,14 @@ export default function PageName() {
   const [discoverable, setDiscoverable] = useState(true);
   const [availability, setAvailability] = useState('immediate');
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = SECTIONS.findIndex((s) => s.id === entry.target.id);
-            if (index !== -1) setActiveIndex(index);
-          }
-        });
-      },
-      { rootMargin: '-20% 0px -65% 0px', threshold: 0 }
-    );
-
-    SECTIONS.forEach((section) => {
-      const el = sectionRefs.current[section.id];
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const goToStep = (index: number) => {
+    if (index >= 0 && index < SECTIONS.length) {
+      setActiveIndex(index);
+    }
   };
+
+  const goNext = () => goToStep(activeIndex + 1);
+  const goPrev = () => goToStep(activeIndex - 1);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -225,6 +207,30 @@ export default function PageName() {
 
   return (
     <div className="min-h-screen bg-cream">
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+      {/* Intro Section */}
+      <div className="bg-secondary border-b border-light-border">
+        <div className="max-w-6xl mx-auto px-6 py-12">
+          <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--color-foreground)' }}>
+            Welcome to CareerOS
+          </h1>
+          <p className="text-lg" style={{ color: 'var(--color-muted)' }}>
+            Build your complete professional profile. This information helps us match you with the right opportunities.
+          </p>
+        </div>
+      </div>
+
       <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="grid grid-cols-4 gap-10">
           {/* Left: sticky progress */}
@@ -251,7 +257,7 @@ export default function PageName() {
                       )}
                       <button
                         type="button"
-                        onClick={() => scrollToSection(section.id)}
+                        onClick={() => goToStep(index)}
                         className="relative flex items-center gap-3 text-left"
                       >
                         <span
@@ -279,9 +285,12 @@ export default function PageName() {
           </div>
 
           {/* Right: form content */}
-          <div className="col-span-3 space-y-16">
+          <div className="col-span-3">
             {/* About You */}
-            <div id="about" ref={(el) => { sectionRefs.current.about = el; }}>
+            {activeIndex === 0 && (
+            <div id="about" ref={(el) => { sectionRefs.current.about = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -363,10 +372,33 @@ export default function PageName() {
                   />
                 </div>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  disabled={activeIndex === 0}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
+            )}
 
             {/* Education */}
-            <div id="education" ref={(el) => { sectionRefs.current.education = el; }}>
+            {activeIndex === 1 && (
+            <div id="education" ref={(el) => { sectionRefs.current.education = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -477,10 +509,32 @@ export default function PageName() {
                   + Add education
                 </button>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
+            )}
 
             {/* Experience */}
-            <div id="experience" ref={(el) => { sectionRefs.current.experience = el; }}>
+            {activeIndex === 2 && (
+            <div id="experience" ref={(el) => { sectionRefs.current.experience = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -592,10 +646,32 @@ export default function PageName() {
                   + Add experience
                 </button>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
+            )}
 
             {/* Skills & Interests */}
-            <div id="skills" ref={(el) => { sectionRefs.current.skills = el; }}>
+            {activeIndex === 3 && (
+            <div id="skills" ref={(el) => { sectionRefs.current.skills = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -658,10 +734,32 @@ export default function PageName() {
                   )}
                 </div>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
+            )}
 
             {/* Resume & Links */}
-            <div id="links" ref={(el) => { sectionRefs.current.links = el; }}>
+            {activeIndex === 4 && (
+            <div id="links" ref={(el) => { sectionRefs.current.links = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -734,10 +832,32 @@ export default function PageName() {
                   </div>
                 </div>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Next
+                </button>
+              </div>
             </div>
+            )}
 
             {/* Preferences */}
-            <div id="preferences" ref={(el) => { sectionRefs.current.preferences = el; }}>
+            {activeIndex === 5 && (
+            <div id="preferences" ref={(el) => { sectionRefs.current.preferences = el; }} style={{
+              animation: 'fadeInUp 500ms ease-out',
+            }}>
               <div className="bg-card rounded-lg border p-8 shadow-sm" style={{ borderColor: 'var(--color-light-border)' }}>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white">
@@ -806,17 +926,25 @@ export default function PageName() {
                   </div>
                 </div>
               </div>
+              <div className="flex justify-between mt-8">
+                <button
+                  type="button"
+                  onClick={goPrev}
+                  className="px-6 py-2 rounded-lg border font-medium text-sm transition-colors hover:bg-gray-50"
+                  style={{ borderColor: 'var(--color-light-border)', color: 'var(--color-foreground)' }}
+                >
+                  Previous
+                </button>
+                <Link
+                  href="/candidates"
+                  className="px-6 py-2 rounded-lg font-medium text-sm text-white hover:opacity-90 transition-colors inline-block"
+                  style={{ backgroundColor: 'var(--color-accent)' }}
+                >
+                  Complete profile
+                </Link>
+              </div>
             </div>
-
-            <div className="flex justify-end pb-10">
-              <Link
-                href="/candidates"
-                className="text-sm font-semibold px-6 py-3 rounded-lg text-white hover:opacity-90 transition-colors inline-block"
-                style={{ backgroundColor: 'var(--color-accent)' }}
-              >
-                Complete profile
-              </Link>
-            </div>
+            )}
           </div>
         </div>
       </div>

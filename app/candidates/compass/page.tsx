@@ -91,9 +91,8 @@ function ChartIcon() {
 
 function CloudIcon() {
   return (
-    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 5.23 11.08 5 12 5c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3 0 1.13-.64 2.11-1.56 2.62l1.45 1.45c.9-.86 1.48-2.04 1.48-3.36 0-2.64-2.05-4.82-4.65-4.97z" />
-      <path d="M3 13.5h8V11H3c-1.1 0-2 .9-2 2s.9 2 2 2z" />
+    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.25 15Z" />
     </svg>
   );
 }
@@ -349,7 +348,7 @@ function PathPicker({ selectedPathId, onSelectPath }: { selectedPathId: string; 
           return (
             <div
               key={path.id}
-              className={`rounded-2xl p-6 shadow-sm transition-all ${
+              className={`rounded-2xl p-6 shadow-sm transition-all flex flex-col ${
                 isSelected
                   ? 'border-2 bg-card'
                   : 'border bg-card hover:shadow-md'
@@ -429,18 +428,18 @@ function PathPicker({ selectedPathId, onSelectPath }: { selectedPathId: string; 
               </div>
 
               {/* CTA Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-auto">
                 {isSelected ? (
                   <button
                     disabled
                     className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm transition-opacity flex items-center justify-center gap-2"
                     style={{
-                      backgroundColor: 'var(--color-near-black)',
+                      backgroundColor: '#111',
                       color: 'white',
                       opacity: 1,
                     }}
                   >
-                    ✓ Plan selected
+                    Plan selected
                   </button>
                 ) : (
                   <>
@@ -556,7 +555,7 @@ function RoadmapPanel({ selectedPathId }: { selectedPathId: string }) {
         <div
           className="col-span-1 rounded-2xl p-6 shadow-sm border"
           style={{
-            backgroundColor: 'var(--color-near-black)',
+            backgroundColor: 'var(--color-accent)',
             borderColor: 'var(--color-near-black)',
           }}
         >
